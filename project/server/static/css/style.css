@@ -61,6 +61,7 @@ margin-top: 100px;
 }
 
 .register{
+  display:none;
   z-index: 2;
   height: 38em;
   width:30em;
@@ -226,6 +227,7 @@ form{
 
 .register{
   margin:5% 12%;
+  display:none;
 }
 }
 

@@ -7,6 +7,7 @@
   <title>Document</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+  <script src="{{ url_for('static', filename= 'js/login.js') }}"></script>
 </head>
 <body>
     
@@ -18,8 +19,8 @@
                 <h4>Выполните вход</h4>
         </div>
         <div id="input">
-        <input type="text" placeholder="enter e-mail"> </br>  Enter e-mail </br>
-        <input type="password" placeholder="set password"> </br> Enter password </br>
+        <input type="text" placeholder="Введите ваш ник или e-mail"> </br>  Enter e-mail </br>
+        <input type="password" placeholder="Введите пароль"> </br> Enter password </br>
         <input type="submit" value="Подтвердить">
         </div>
     </div>
@@ -38,7 +39,7 @@
           <blanc>Баланс:54$</blanc>
           <login>
             <div class="login__icon"></div>
-            <button type="button" class="btn btn-primary" name="Bxod">Вход</button>
+            <button type="button" class="btn btn-primary" name="Bxod" onclick="myFunction()">Вход</button>
           </login>
     </div>
   </nav>
