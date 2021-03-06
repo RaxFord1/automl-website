@@ -1,6 +1,5 @@
 # project/server/__init__.py
 
-from project.server.auth.views import auth_blueprint
 import os
 
 from flask import Flask, render_template, jsonify, request
@@ -22,6 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:8462@localhost:54
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
+from project.server.auth.views import auth_blueprint
 app.register_blueprint(auth_blueprint)
 
 
@@ -29,13 +29,12 @@ app.register_blueprint(auth_blueprint)
 def hello():
     return render_template('index.html')
 
-
 @app.route('/_add_numbers')
 def add_numbers():
     print("ADD NUMBERS:::::::::")
     a = request.args.get('a', 0, type=int)
     b = request.args.get('b', 0, type=int)
-    print(a, b)
+    print(a,b)
     return jsonify(result=a + b)
 
 
@@ -43,7 +42,7 @@ def add_numbers():
 def register_page():
     return render_template('register.html')
 
-
 @app.route('/login')
 def login_page():
     return render_template('login.html')
+    
