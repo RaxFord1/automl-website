@@ -2,58 +2,60 @@
 
 {% block content %}
 <div class="register" style="display:block">
-        
+
     <div class="logo">
         <div class="circle_main"></div>
-            <div class="circle"><div id="additional"></div></div>
-            <h4></h4>
+        <div class="circle">
+            <div id="additional"></div>
+        </div>
+        <h4></h4>
     </div>
     <div id="input">
-      <form class="login100-form validate-form" style="margin:auto;">
-        <span class="login100-form-title">
-        Member registration
-        </span>
-        
-        <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-          <input class="input100" type="text" name="email" placeholder="Email">
-          <span class="focus-input100"></span>
-          <span class="symbol-input100">
-          <i class="fa fa-envelope" aria-hidden="true"></i>
-          </span>
-          </div>
-        <div class="wrap-input100 validate-input" data-validate="Password is required">
-        <input class="input100" type="password" name="password" placeholder="Password">
-        <span class="focus-input100"></span>
-        <span class="symbol-input100">
-        <i class="fa fa-lock" aria-hidden="true"></i>
-        </span>
-        </div>
-        <div class="container-login100-form-btn">
-        <button class="login100-form-btn">
-        Login
-        </button>
-        </div>
-        <div class="text-center p-t-12">
-        <span class="txt1">
-        Forgot
-        </span>
-        <a class="txt2" href="#">
-        Username / Password?
-        </a>
-        </div>
-        <div class="text-center p-t-136">
-        <a class="txt2" href="/register">
-        Register
-        <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-        </a>
-        </div>
+        <form class="login100-form validate-form" id="myForm" style="margin:auto;">
+            <span class="login100-form-title">
+                Member registration
+            </span>
+
+            <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                <input class="input100" type="text" name="email" placeholder="Email">
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                </span>
+            </div>
+            <div class="wrap-input100 validate-input" data-validate="Password is required">
+                <input class="input100" type="password" name="password" placeholder="Password">
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                </span>
+            </div>
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn">
+                    Login
+                </button>
+            </div>
+            <div class="text-center p-t-12">
+                <span class="txt1">
+                    Forgot
+                </span>
+                <a class="txt2" href="#">
+                    Username / Password?
+                </a>
+            </div>
+            <div class="text-center p-t-136">
+                <a class="txt2" href="/register">
+                    Register
+                    <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+                </a>
+            </div>
         </form>
         <div class="result"></div>
-</div>  
+    </div>
 </div>
 
 
-  <script type=text/javascript>
+<script type=text/javascript>
     const form = document.getElementById( "myForm" );
 
     form.addEventListener( "submit", function ( event ) {
@@ -64,45 +66,45 @@
     let last;
       $(function() {
         console.log("INIT"+String($SCRIPT_ROOT));
-            $('input[name="submit"]').bind('click', function() {
+        $('.login100-form-btn').bind('click', function() {
                 
-                if ($('input[name="nickname"]').val() == "" ){
-                    $(".result").addClass("error");
-                    $(".result").text("Все поля должны быть заполнены");
-                    return false;
-                } 
-                if ($('input[name="password"]').val() == ""){
-                    $(".result").addClass("error");
-                    $(".result").text("Все поля должны быть заполнены");
-                    return false;
-                }
-                console.log("SEND_TO"+String($SCRIPT_ROOT));
-                var jqxhr = $.post( $SCRIPT_ROOT + '/auth/login',
-                {
-                    email: $('input[name="nickname"]').val(),
-                    password: $('input[name="password"]').val()
-                }, 
-                function(data) {
-                    alert( "success" );
+            if ($('input[name="nickname"]').val() == "" ){
+                $(".result").addClass("error");
+                $(".result").text("Все поля должны быть заполнены");
+                return false;
+            } 
+            if ($('input[name="password"]').val() == ""){
+                $(".result").addClass("error");
+                $(".result").text("Все поля должны быть заполнены");
+                return false;
+            }
+            console.log("SEND_TO"+String($SCRIPT_ROOT));
+            var jqxhr = $.post( $SCRIPT_ROOT + '/auth/login',
+            {
+                email: $('input[name="nickname"]').val(),
+                password: $('input[name="password"]').val()
+            }, 
+            function(data) {
+                alert( "success" );
+                console.log( data );
+                })
+                .done(function(data) {
+                    alert( "second success" );
                     console.log( data );
-                    })
-                    .done(function(data) {
-                        alert( "second success" );
-                        console.log( data );
-                        a = data;
-                        $(".result").text(data.message);
-                    })
-                    .fail(function(data) {
-                        
-                        console.log(data)
-                        
-                        alert( "error" );
-                        $(".result").addClass("error");
-                        $(".result").text(data.responseJSON.message);
-                    }).always(function(data){
-                        last = data;
-    
-                    });
+                    a = data;
+                    $(".result").text(data.message);
+                })
+                .fail(function(data) {
+                    
+                    console.log(data)
+                    
+                    alert( "error" );
+                    $(".result").addClass("error");
+                    $(".result").text(data.responseJSON.message);
+                }).always(function(data){
+                    last = data;
+
+                });
             });
           });
         

@@ -1,93 +1,97 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="register" style="display:block">
-        
+<div class="register">
+
   <div class="logo">
-      <div class="circle_main"></div>
-          <div class="circle"><div id="additional"></div></div>
-          <h4></h4>
+    <div class="circle_main"></div>
+    <div class="circle">
+      <div id="additional"></div>
+    </div>
+    <h4></h4>
   </div>
   <div id="input">
-    <form class="login100-form validate-form" style="margin:auto;">
+    <form class="login100-form validate-form" id="myForm" style="margin:auto;">
       <span class="login100-form-title">
-      Member registration
+        Member registration
       </span>
-      
+
       <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
         <input class="input100" type="text" name="email" placeholder="Email">
         <span class="focus-input100"></span>
         <span class="symbol-input100">
-        <i class="fa fa-envelope" aria-hidden="true"></i>
+          <i class="fa fa-envelope" aria-hidden="true"></i>
         </span>
-        </div>
+      </div>
       <div class="wrap-input100 validate-input" data-validate="Password is required">
-      <input class="input100" type="password" name="password" placeholder="Password">
-      <span class="focus-input100"></span>
-      <span class="symbol-input100">
-      <i class="fa fa-lock" aria-hidden="true"></i>
-      </span>
+        <input class="input100" type="password" name="password" placeholder="Password">
+        <span class="focus-input100"></span>
+        <span class="symbol-input100">
+          <i class="fa fa-lock" aria-hidden="true"></i>
+        </span>
       </div>
       <div class="container-login100-form-btn">
-      <button class="login100-form-btn">
-      Login
-      </button>
+        <button class="login100-form-btn">
+          Login
+        </button>
       </div>
       <div class="text-center p-t-12">
-      <span class="txt1">
-      Forgot
-      </span>
-      <a class="txt2" href="#">
-      Username / Password?
-      </a>
+        <span class="txt1">
+          Forgot
+        </span>
+        <a class="txt2" href="#">
+          Username / Password?
+        </a>
       </div>
       <div class="text-center p-t-136">
-      <a class="txt2" href="/register">
-      Register
-      <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-      </a>
+        <a class="txt2" href="/register">
+          Register
+          <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+        </a>
       </div>
-      </form>
-      <div class="result"></div>
-</div>  
+    </form>
+    <div class="result"></div>
+  </div>
 </div>
 
 <div class="container">
   <div class="video__home">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/GbLQE2C181U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/GbLQE2C181U" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
   </div>
 </div>
-  <div class="container">
-<div class="tabliza__home">
-<table border="1">
-<thead>
-  <tr class="tabliza__mainTitle">
-    <th colspan="4">Tablica</th>
-  </tr>
-</thead>
+<div class="container">
+  <div class="tabliza__home">
+    <table border="1">
+      <thead>
+        <tr class="tabliza__mainTitle">
+          <th colspan="4">Tablica</th>
+        </tr>
+      </thead>
 
-<tr>
-  <td>Задача</td>
-  <td>Большая</td>
-  <td>Средняя</td>
-  <td>Малая</td>
-</tr>
-<tr>
-  <td>Распознование изображения</td>
-  <td>Стоимость Время Вес(в КБ)</td>
-  <td></td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-</tr>
-</table>
-</div>
-<button type="button" class="btn fiolBtn" name="button">Приступить</button>
+      <tr>
+        <td>Задача</td>
+        <td>Большая</td>
+        <td>Средняя</td>
+        <td>Малая</td>
+      </tr>
+      <tr>
+        <td>Распознование изображения</td>
+        <td>Стоимость Время Вес(в КБ)</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
   </div>
+  <button type="button" class="btn fiolBtn" name="button">Приступить</button>
+</div>
 
 
 <script type=text/javascript>
@@ -101,7 +105,7 @@
     let last;
       $(function() {
         console.log("INIT"+String($SCRIPT_ROOT));
-            $('input[name="submit"]').bind('click', function() {
+        $('.login100-form-btn').bind('click', function() {
                 
                 if ($('input[name="nickname"]').val() == "" ){
                     $(".result").addClass("error");

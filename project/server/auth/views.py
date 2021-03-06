@@ -31,7 +31,7 @@ class RegisterAPI(MethodView):
                 db.session.commit()
                 # generate the auth token
                 auth_token = user.encode_auth_token(user.id)
-                print("AUTH TOKEN:::",auth_token)
+                print("AUTH TOKEN:::", auth_token)
                 responseObject = {
                     'status': 'success',
                     'message': 'Successfully registered.',
@@ -57,6 +57,7 @@ class LoginAPI(MethodView):
     """
     User Login Resource
     """
+
     def post(self):
         # get the post data
         post_data = request.get_json()
@@ -95,6 +96,7 @@ class UserAPI(MethodView):
     """
     User Resource
     """
+
     def get(self):
         # get the auth token
         auth_header = request.headers.get('Authorization')
@@ -140,6 +142,7 @@ class LogoutAPI(MethodView):
     """
     Logout Resource
     """
+
     def post(self):
         # get auth token
         auth_header = request.headers.get('Authorization')
@@ -179,6 +182,7 @@ class LogoutAPI(MethodView):
                 'message': 'Provide a valid auth token.'
             }
             return make_response(jsonify(responseObject)), 403
+
 
 # define the API resources
 registration_view = RegisterAPI.as_view('register_api')
