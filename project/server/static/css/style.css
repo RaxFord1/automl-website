@@ -1,0 +1,61 @@
+body{
+  background-image: url(img/5.jpg);
+  background-color: blue;
+}
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+}
+.nav__link{
+  display: flex;
+}
+.nav__link a {
+    text-decoration: none;
+    color: darkred;
+    padding-right: 15px;
+}
+.uchet {
+    display: contents;
+}
+
+blanc {
+    margin-right: -110px;
+    color: #fff;
+}
+.login__icon{
+  width: 30px;
+  height: 30px;
+  border-radius: 20px;
+  background-color: red;
+  margin: auto;
+  margin-bottom: 10px;
+}
+.btn-primary {
+    color: #fff;
+    width: 70px;
+    height: 40px;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.login {
+    margin-top: -19px;
+}
+table {
+    border-collapse: collapse;
+    margin: auto;
+    margin-top: 100px;
+    color: #fff;
+}
+tr.tabliza__mainTitle {
+    text-align: center;
+}
+.fiolBtn{
+  background-color: #8E13EF;
+  color: #fff;
+  border-radius: 30px;
+  position: relative;
+left: 50%;
+transform: translate(-50%, 0);
+margin-top: 100px;
+}
