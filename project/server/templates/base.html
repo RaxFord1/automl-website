@@ -9,9 +9,26 @@
   <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
 </head>
 <body>
+    
+    <div class="register">
+        
+        <div class="logo">
+            <div class="circle_main"></div>
+                <div class="circle"><div id="additional"></div></div>
+                <h4>Выполните вход</h4>
+        </div>
+        <div id="input">
+        <input type="text" placeholder="enter e-mail"> </br>  Enter e-mail </br>
+        <input type="password" placeholder="set password"> </br> Enter password </br>
+        <input type="submit" value="Подтвердить">
+        </div>
+    </div>
+    
+  
+
   <div class="container cont-nav">
   <nav class="navigation">
-    <logo><img src={{url_for('static',filename="img/logo.png")}} alt=""></logo>
+    <logo><img src={{url_for('static',filename="img/logo.png")}} alt="RaxFord - создатель данной платформы"></logo>
     <div class="nav__link">
       <div class=""><a href="#">Главная</a></div>
       <div class=""><a href="#">Загрузка\Выбор</a></div>
@@ -27,6 +44,7 @@
   </nav>
   </div>
   {% block content %} {% endblock %}
+  
 
 <script  src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>

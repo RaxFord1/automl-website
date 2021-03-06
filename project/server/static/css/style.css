@@ -59,3 +59,208 @@ left: 50%;
 transform: translate(-50%, 0);
 margin-top: 100px;
 }
+
+.register{
+  z-index: 2;
+  height: 38em;
+  width:30em;
+  background: rgb(0, 58, 165);
+  margin: auto;
+  border: 1px solid white;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px 8px rgba(0, 0, 0, 0.5);
+  
+  position: fixed; top: 50%; left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+from { transform: rotate(0deg); }
+to { transform: rotate(360deg); }
+}
+
+.circle_main{
+  z-index: 2;
+  margin: 7.5% 29%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-image: url(../img/login_first.jpg);
+  background-size: 129%;
+  background-position: center; 
+}
+
+.circle {
+  top:50px;
+   margin: -49.5% 29%;
+  width: 200px;
+height: 200px;
+  border-radius: 50%;
+  background-size: 200px;
+/*background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, rgb(0, 204, 255) 0%, rgb(0, 81, 255) 100%, rgb(0, 60, 255) 95%);
+background-image: -webkit-radial-gradient(45px 45px, circle cover, rgb(0, 204, 255), rgb(0, 81, 255));
+background-image: radial-gradient(45pxz 45px 45deg, circle cover,  rgb(0, 204, 255) 0%, rgb(0, 89, 255) 100%, rgb(0, 38, 255) 95%);
+*/
+animation-name: spin; 
+animation-duration: 3s; /* 3 seconds */
+animation-iteration-count: infinite; 
+  animation-timing-function: linear;
+  
+}
+
+#additional{
+  width:20px;
+  height: 20px;
+  background: rgb(0, 183, 255);
+  border-radius: 50px;
+  margin:1% 1%;
+}
+
+.logo{
+  padding-top: 2px;
+}
+
+h4{
+  margin:8% -0.5%;
+  text-align: center;
+  font-size: 140%;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.logo h4{
+  position: relative;
+  margin-top: 50%;
+  text-align: center;
+  font-size:140%;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+}
+
+#input{
+  margin:auto;
+  text-align: center;
+  color: white;
+  font-family: 'Saira Condensed', sans-serif;
+}
+
+input[value="Подтвердить"]{
+  background: rgb(42, 185, 252);
+  border: 1px solid rgb(42, 185, 252);
+  padding: 9px 15px;
+  margin: 15% 0%;
+  font-size: 170%;
+  color:white;
+  transition: all 0.15s;
+  font-family: 'Bitter', serif;
+
+}
+
+input[value="Log in"]{
+  background: rgb(42, 185, 252);
+  border: 1px solid rgb(42, 185, 252);
+  padding: 2px 5px;
+  font-size: 90%;
+  color:white;
+  transition: all 0.15s;
+  font-family: 'Bitter', serif;
+}
+
+input[value="submit"]:active,[value="Log in"]:active{
+  background:rgb(0, 34, 184);
+  color:rgb(26, 38, 207);
+  cursor: pointer;
+
+}
+
+input[value="submit"]:hover,[value="Log in"]:hover{
+  background: rgb(26, 150, 207);
+  cursor: pointer;
+  
+}
+
+/*.circle:hover{
+  background-image: -moz-radial-gradient(45px 45px 45deg, circle cover, rgb(0, 47, 255) 0%, rgb(0, 47, 255) 100%,  rgb(0, 204, 255));
+background-image: -webkit-radial-gradient(45px 45px, circle cover, rgb(0, 47, 255) , rgb(0, 204, 255));
+background-image: radial-gradient(45px 45px 45deg, circle cover,  rgb(0, 38, 255)  0%, rgb(1, 67, 189) 100%, rgb(0, 204, 255));
+}
+*/
+#input input[placeholder="set password"]{
+  margin-bottom:8px;
+}
+
+@media screen and (max-width: 1480px){
+body{
+  background-size:inherit;
+}
+
+form{
+  margin:0 53%;
+  padding-right:1em;
+}
+}
+
+@media screen and (max-width: 1400px){
+body{
+  background-size:inherit;
+}
+
+form{
+  margin:0 50%;
+  padding-right:1em;
+}
+}
+
+@media screen and (max-width: 640px){
+form{
+  margin:0% 10%;
+  width:100%;
+}
+
+.logIn input{
+  width:65px;
+  font-size:90%;
+}
+
+.register{
+  margin:5% 12%;
+}
+}
+
+@media screen and (max-width: 460px){
+form{
+  font-size:80%;
+  margin:0 5%;
+}
+
+.logIn input{
+  width:65px;
+  font-size:90%;
+}
+
+.register{
+  margin:10% 2%;
+  width:96%;
+}
+
+.circle{
+    width: 120px;
+height: 120px;
+  margin:6% 35%;
+}
+h4{
+  font-size:110%;
+}
+
+#input{
+  margin:5% 4%;
+}
+
+#input input[type=text]{
+  width:250px;
+  height:30px;
+}
+
+}
