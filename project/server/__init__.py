@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -15,6 +15,8 @@ app_settings = os.getenv(
     'project.server.config.DevelopmentConfig'
 )
 app.config.from_object(app_settings)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:8462@localhost:5432/'
+
 
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
@@ -27,4 +29,20 @@ app.register_blueprint(auth_blueprint)
 def hello():
     return render_template('index.html')
 
+@app.route('/_add_numbers')
+def add_numbers():
+    print("ADD NUMBERS:::::::::")
+    a = request.args.get('a', 0, type=int)
+    b = request.args.get('b', 0, type=int)
+    print(a,b)
+    return jsonify(result=a + b)
+
+
+@app.route('/register')
+def register_page():
+    print("ADD NUMBERS:::::::::")
+    a = request.args.get('a', 0, type=int)
+    b = request.args.get('b', 0, type=int)
+    print(a,b)
+    return jsonify(result=a + b)
     

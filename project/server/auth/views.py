@@ -1,12 +1,11 @@
 # project/server/auth/views.py
 
-
+import jwt
 from flask import Blueprint, request, make_response, jsonify
 from flask.views import MethodView
 
-from project.server import bcrypt, db
+from project.server import bcrypt, db, app
 from project.server.models import User, BlacklistToken
-
 auth_blueprint = Blueprint('auth', __name__)
 
 
@@ -19,22 +18,24 @@ class RegisterAPI(MethodView):
         # get the post data
         post_data = request.get_json()
         # check if user already exists
-        user = User.query.filter_by(email=post_data.get('email')).first()
+        print()
+        user = User.query.filter_by(email=request.form['email']).first()
         if not user:
             try:
                 user = User(
-                    email=post_data.get('email'),
-                    password=post_data.get('password')
+                    email=request.form['email'],
+                    password=request.form['password']
                 )
                 # insert the user
                 db.session.add(user)
                 db.session.commit()
                 # generate the auth token
                 auth_token = user.encode_auth_token(user.id)
+                print("AUTH TOKEN:::",auth_token)
                 responseObject = {
                     'status': 'success',
                     'message': 'Successfully registered.',
-                    'auth_token': auth_token.decode()
+                    'auth_token': jwt.decode(auth_token, app.config.get('SECRET_KEY'), algorithms=["HS256"])
                 }
                 return make_response(jsonify(responseObject)), 201
             except Exception as e:
@@ -42,6 +43,7 @@ class RegisterAPI(MethodView):
                     'status': 'fail',
                     'message': 'Some error occurred. Please try again.'
                 }
+                print(e)
                 return make_response(jsonify(responseObject)), 401
         else:
             responseObject = {

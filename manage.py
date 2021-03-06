@@ -11,7 +11,7 @@ from flask_migrate import Migrate, MigrateCommand
 
 os.environ['APP_SETTINGS'] = "project.server.config.DevelopmentConfig"
 os.environ['SECRET_KEY'] = "Qsq7owM3Ut"
-
+os.environ['DATABASE_PASSWORD'] = "8462"
 COV = coverage.coverage(
     branch=True,
     include='project/*',

@@ -1,6 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="register">
+        
+  <div class="logo">
+      <div class="circle_main"></div>
+          <div class="circle"><div id="additional"></div></div>
+          <h4>Выполните вход</h4>
+  </div>
+  <div id="input">
+      <input type="text" placeholder="Введите ваш ник или e-mail" name="nickname" required > </br>  Enter e-mail </br>
+      <input type="password" placeholder="Введите пароль" name="password" required > </br> Enter password </br>
+  
+      <input type="submit" value="Подтвердить" name="submit" >
+      <div class="text-center p-t-12">
+          <span class="txt1">
+          Потеряли 
+          </span>
+          <a class="txt2" href="#">
+          Username / Password?
+          </a>
+          </div>
+
+          <div class="text-center p-t-136">
+              <a class="txt2" href="/register">
+              Создать новый аккаунт
+              <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+              </a>
+              </div>
+
+      <div class="result"></div>
+      
+  </div>
+</div>
+
 <div class="container">
   <div class="video__home">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/GbLQE2C181U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -37,4 +70,85 @@
 </div>
 <button type="button" class="btn fiolBtn" name="button">Приступить</button>
   </div>
+
+
+  <script type=text/javascript>
+    let a;
+    let last;
+      $(function() {
+        console.log("INIT"+String($SCRIPT_ROOT));
+            $('input[name="submit"]').bind('click', function() {
+                
+                if ($('input[name="nickname"]').val() == "" ){
+                    $(".result").addClass("error");
+                    $(".result").text("Все поля должны быть заполнены");
+                    return false;
+                } 
+                if ($('input[name="password"]').val() == ""){
+                    $(".result").addClass("error");
+                    $(".result").text("Все поля должны быть заполнены");
+                    return false;
+                }
+                console.log("SEND_TO"+String($SCRIPT_ROOT));
+                var jqxhr = $.post( $SCRIPT_ROOT + '/auth/register',
+                {
+                    email: $('input[name="nickname"]').val(),
+                    password: $('input[name="password"]').val()
+                }, 
+                function(data) {
+                    alert( "success" );
+                    console.log( data );
+                    })
+                    .done(function(data) {
+                        alert( "second success" );
+                        console.log( data );
+                        a = data;
+                        $(".result").text(data.message);
+                    })
+                    .fail(function(data) {
+                        
+                        console.log(data)
+                        
+                        alert( "error" );
+                        $(".result").text(data.responseJSON.message);
+                    }).always(function(data){
+                        last = data;
+    
+                    });
+            });
+          });
+          
+            
+    
+    
+        /*$(function() {
+        console.log("INIT"+String($SCRIPT_ROOT));
+            $('input[name="submit"]').bind('click', function() {
+                console.log("SEND_TO"+String($SCRIPT_ROOT));
+              $.getJSON($SCRIPT_ROOT + '/auth/register', {
+                email: $('input[name="nickname"]').val(),
+                password: $('input[name="password"]').val()
+              }, function(data) {
+                console.log("result:"+String(data));
+                $(".result").text(data.result);
+              });
+              return false;
+            });
+          });*/
+    
+    
+          /*$(function() {
+        console.log("INIT"+String($SCRIPT_ROOT));
+            $('input[name="submit"]').bind('click', function() {
+                console.log("SEND_TO"+String($SCRIPT_ROOT));
+              $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
+                a: 1,//$('input[name="a"]').val(),
+                b: 2,//$('input[name="b"]').val()
+              }, function(data) {
+                $(".result").text(data.result);
+              });
+              return false;
+            });
+          });*/
+    </script>
 {% endblock %}
