@@ -7,7 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
 
 app_settings = os.getenv(
@@ -25,6 +25,6 @@ app.register_blueprint(auth_blueprint)
 
 @app.route('/')
 def hello():
-    return render_template('website/index.html')
+    return render_template('index.html')
 
     
