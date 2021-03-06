@@ -40,9 +40,9 @@ def add_numbers():
 
 @app.route('/register')
 def register_page():
-    print("ADD NUMBERS:::::::::")
-    a = request.args.get('a', 0, type=int)
-    b = request.args.get('b', 0, type=int)
-    print(a,b)
-    return jsonify(result=a + b)
+    return render_template('register.html')
+
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
     

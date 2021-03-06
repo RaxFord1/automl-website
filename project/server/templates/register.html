@@ -30,7 +30,7 @@
       </div>
       <div class="container-login100-form-btn">
       <button class="login100-form-btn">
-      Login
+      Register
       </button>
       </div>
       <div class="text-center p-t-12">
@@ -42,60 +42,27 @@
       </a>
       </div>
       <div class="text-center p-t-136">
-      <a class="txt2" href="/register">
-      Register
+      <a class="txt2" href="/login">
+      LogIn
       <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
       </a>
       </div>
       </form>
+
       <div class="result"></div>
-</div>  
-</div>
-
-<div class="container">
-  <div class="video__home">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/GbLQE2C181U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      
   </div>
 </div>
-  <div class="container">
-<div class="tabliza__home">
-<table border="1">
-<thead>
-  <tr class="tabliza__mainTitle">
-    <th colspan="4">Tablica</th>
-  </tr>
-</thead>
 
-<tr>
-  <td>Задача</td>
-  <td>Большая</td>
-  <td>Средняя</td>
-  <td>Малая</td>
-</tr>
-<tr>
-  <td>Распознование изображения</td>
-  <td>Стоимость Время Вес(в КБ)</td>
-  <td></td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-</tr>
-</table>
-</div>
-<button type="button" class="btn fiolBtn" name="button">Приступить</button>
-  </div>
 
 
 <script type=text/javascript>
 
   const form = document.getElementById( "myForm" );
+
   form.addEventListener( "submit", function ( event ) {
     event.preventDefault();
-  });
+  } );
 
     let a;
     let last;
@@ -134,6 +101,7 @@
                         console.log(data)
                         
                         alert( "error" );
+                        $(".result").addClass("error");
                         $(".result").text(data.responseJSON.message);
                     }).always(function(data){
                         last = data;
@@ -141,38 +109,6 @@
                     });
             });
           });
-          
-            
-    
-    
-        /*$(function() {
-        console.log("INIT"+String($SCRIPT_ROOT));
-            $('input[name="submit"]').bind('click', function() {
-                console.log("SEND_TO"+String($SCRIPT_ROOT));
-              $.getJSON($SCRIPT_ROOT + '/auth/register', {
-                email: $('input[name="nickname"]').val(),
-                password: $('input[name="password"]').val()
-              }, function(data) {
-                console.log("result:"+String(data));
-                $(".result").text(data.result);
-              });
-              return false;
-            });
-          });*/
-    
-    
-          /*$(function() {
-        console.log("INIT"+String($SCRIPT_ROOT));
-            $('input[name="submit"]').bind('click', function() {
-                console.log("SEND_TO"+String($SCRIPT_ROOT));
-              $.getJSON($SCRIPT_ROOT + '/_add_numbers', {
-                a: 1,//$('input[name="a"]').val(),
-                b: 2,//$('input[name="b"]').val()
-              }, function(data) {
-                $(".result").text(data.result);
-              });
-              return false;
-            });
-          });*/
+        
     </script>
 {% endblock %}
