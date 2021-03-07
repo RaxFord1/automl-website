@@ -101,6 +101,35 @@ class LoginAPI(MethodView):
             return make_response(jsonify(responseObject)), 500
 
 
+def check_status():
+    auth_header = request.headers.get('Authorization')
+    print(auth_header)
+    if auth_header:
+        try:
+            auth_token = auth_header.split(" ")[1]
+        except IndexError:
+            return False
+    else:
+        auth_token = ''
+    if auth_token:
+        resp = User.decode_auth_token(auth_token)
+        if not isinstance(resp, str):
+            user = User.query.filter_by(id=resp).first()
+            responseObject = {
+                'status': 'success',
+                'data': {
+                    'user_id': user.id,
+                    'email': user.email,
+                    'admin': user.admin,
+                    'registered_on': user.registered_on
+                }
+            }
+            return responseObject
+        return False
+    else:
+        return False
+
+
 class UserAPI(MethodView):
     """
     User Resource
@@ -122,7 +151,6 @@ class UserAPI(MethodView):
         else:
             auth_token = ''
         if auth_token:
-            resp = User.decode_auth_token(a[0])
             resp = User.decode_auth_token(auth_token)
             if not isinstance(resp, str):
                 user = User.query.filter_by(id=resp).first()
