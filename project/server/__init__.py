@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:8462@localhost:54
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
-from project.server.auth.views import auth_blueprint
+from project.server.auth.views import auth_blueprint, user_view
 app.register_blueprint(auth_blueprint)
 
 
@@ -44,5 +44,6 @@ def register_page():
 
 @app.route('/login')
 def login_page():
-    return render_template('login.html')
+
+    return render_template('login.html', status_entered = False)
     

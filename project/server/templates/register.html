@@ -71,8 +71,9 @@
       $(function() {
         console.log("INIT"+String($SCRIPT_ROOT));
             $('.login100-form-btn').bind('click', function() {
-                
-                if ($('input[name="nickname"]').val() == "" ){
+                console.log($('input[name="email"]').val());
+                console.log($('input[name="password"]').val())
+                if ($('input[name="email"]').val() == "" ){
                     $(".result").addClass("error");
                     $(".result").text("Все поля должны быть заполнены");
                     return false;
@@ -85,7 +86,7 @@
                 console.log("SEND_TO"+String($SCRIPT_ROOT));
                 var jqxhr = $.post( $SCRIPT_ROOT + '/auth/register',
                 {
-                    email: $('input[name="nickname"]').val(),
+                    email: $('input[name="email"]').val(),
                     password: $('input[name="password"]').val()
                 }, 
                 function(data) {

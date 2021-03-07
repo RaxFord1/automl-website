@@ -17,14 +17,16 @@ class RegisterAPI(MethodView):
     def post(self):
         # get the post data
         post_data = request.get_json()
+        email = request.form['email']
+        password = request.form['password']
         # check if user already exists
         print()
-        user = User.query.filter_by(email=request.form['email']).first()
+        user = User.query.filter_by(email=email).first()
         if not user:
             try:
                 user = User(
-                    email=request.form['email'],
-                    password=request.form['password']
+                    email=email,
+                    password=password
                 )
                 # insert the user
                 db.session.add(user)
@@ -52,7 +54,7 @@ class RegisterAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 202
 
-
+a = [None]
 class LoginAPI(MethodView):
     """
     User Login Resource
@@ -61,20 +63,27 @@ class LoginAPI(MethodView):
     def post(self):
         # get the post data
         post_data = request.get_json()
+        print(request.form)
+        email = request.form['email']
+        password = request.form['password']
         try:
             # fetch the user data
             user = User.query.filter_by(
-                email=post_data.get('email')
+                email=email
             ).first()
             if user and bcrypt.check_password_hash(
-                user.password, post_data.get('password')
+                user.password, password
             ):
                 auth_token = user.encode_auth_token(user.id)
                 if auth_token:
+                    auth_tocket_jwt = jwt.decode(auth_token, app.config.get('SECRET_KEY'), algorithms=["HS256"])
+                    a[0] = auth_token
+                    print("LOGIN:::", auth_token, auth_tocket_jwt, type(auth_token))
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'auth_token': auth_token.decode()
+                        'auth_token': auth_token,
+                        'email': email
                     }
                     return make_response(jsonify(responseObject)), 200
             else:
@@ -100,6 +109,7 @@ class UserAPI(MethodView):
     def get(self):
         # get the auth token
         auth_header = request.headers.get('Authorization')
+        print(auth_header)
         if auth_header:
             try:
                 auth_token = auth_header.split(" ")[1]
@@ -112,6 +122,7 @@ class UserAPI(MethodView):
         else:
             auth_token = ''
         if auth_token:
+            resp = User.decode_auth_token(a[0])
             resp = User.decode_auth_token(auth_token)
             if not isinstance(resp, str):
                 user = User.query.filter_by(id=resp).first()

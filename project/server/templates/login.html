@@ -50,6 +50,9 @@
                 </a>
             </div>
         </form>
+        <button class="" onclick="check_status()">
+                    check
+        </button>
         <div class="result"></div>
     </div>
 </div>
@@ -67,8 +70,9 @@
       $(function() {
         console.log("INIT"+String($SCRIPT_ROOT));
         $('.login100-form-btn').bind('click', function() {
-                
-            if ($('input[name="nickname"]').val() == "" ){
+            console.log($('input[name="email"]').val());
+            console.log($('input[name="password"]').val())
+            if ($('input[name="email"]').val() == "" ){
                 $(".result").addClass("error");
                 $(".result").text("Все поля должны быть заполнены");
                 return false;
@@ -81,15 +85,15 @@
             console.log("SEND_TO"+String($SCRIPT_ROOT));
             var jqxhr = $.post( $SCRIPT_ROOT + '/auth/login',
             {
-                email: $('input[name="nickname"]').val(),
+                email: $('input[name="email"]').val(),
                 password: $('input[name="password"]').val()
             }, 
             function(data) {
-                alert( "success" );
+                //alert( "success" );
                 console.log( data );
                 })
                 .done(function(data) {
-                    alert( "second success" );
+                    //alert( "second success" );
                     console.log( data );
                     a = data;
                     $(".result").text(data.message);
@@ -107,6 +111,20 @@
                 });
             });
           });
-        
+      function check_status(){
+          $.ajax({
+             url: "/auth/status",
+             data: { },
+             type: "GET",
+             headers: {"Authorization": "Bearer "+ last['auth_token']},
+             success: function(data) {
+                 console.log(data);
+                 $("button[name='Enter']").css("display", "none");
+                 $(".login__icon").css("background-color", "green");
+                 $(".status_entered").text("Добро пожаловать, " + String(data.data['email']));
+             }
+          });
+      }
+
     </script>
 {% endblock %}
