@@ -1,4 +1,28 @@
-$SCRIPT_ROOT = "";//{{ request.script_root|tojson|safe }};
+var email;
+
+function check_status() {
+    console.log("CHECK_STATUS");
+    $.ajax({
+        url: "/auth/status",
+        data: {},
+        type: "GET",
+        headers: {"Authorization": "Bearer " + $auth_token},
+        success: function (data) {
+            console.log(data);
+            $("button[name='Enter']").css("display", "none");
+            $(".login__icon").css("background-color", "green");
+            $(".status_entered").text("Добро пожаловать, " + String(data.data['email']))
+            email = String(data.data['email'])
+            $("input[name='dataset_email']").val(email)
+        }
+    }).fail(function (data) {
+        console.log("FAIL");
+        console.log($auth_token);
+        console.log(data)
+    });
+}
+
+
 
 const form = document.getElementById("myForm");
 
@@ -50,31 +74,13 @@ $(function () {
                 $(".result").text(data.responseJSON.message);
             }).always(function (data) {
                 last = data;
-
+                check_status()
             });
         check_status()
     });
 });
 
 
-function check_status() {
-    console.log("CHECK_STATUS");
-    $.ajax({
-        url: "/auth/status",
-        data: {},
-        type: "GET",
-        headers: {"Authorization": "Bearer " + $auth_token},
-        success: function (data) {
-            console.log(data);
-            $("button[name='Enter']").css("display", "none");
-            $(".login__icon").css("background-color", "green");
-            $(".status_entered").text("Добро пожаловать, " + String(data.data['email']));
-        }
-    }).fail(function (data) {
-        console.log("FAIL");
-        console.log($auth_token);
-        console.log(data)
-    });
-}
+
 
 check_status();

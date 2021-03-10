@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="register">
+
+        <div class="logo">
+            <div class="circle_main"></div>
+            <div class="circle">
+                <div id="additional"></div>
+            </div>
+            <h4></h4>
+        </div>
+        <div id="input">
+            <form class="login100-form validate-form" id="myForm" style="margin:auto;">
+            <span class="login100-form-title">
+                Member registration
+            </span>
+
+                <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                    <input class="input100" type="text" name="email" placeholder="Email">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                </span>
+                </div>
+                <div class="wrap-input100 validate-input" data-validate="Password is required">
+                    <input class="input100" type="password" name="password" placeholder="Password">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                </span>
+                </div>
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn">
+                        Login
+                    </button>
+                </div>
+                <div class="text-center p-t-12">
+                <span class="txt1">
+                    Forgot
+                </span>
+                    <a class="txt2" href="#">
+                        Username / Password?
+                    </a>
+                </div>
+                <div class="text-center p-t-136">
+                    <a class="txt2" href="/register">
+                        Register
+                        <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </form>
+            <button class="" onclick="check_status()">
+                check
+            </button>
+            <div class="result"></div>
+        </div>
+    </div>
+
+
+    <div class="container container__dataset">
+        <div class="dataset__info__container">
+            <div class="dataset__info">
+                Пожалуйста. Выберите свой датасет! Помните, что датасет должен быть в особом формате. В
+                нём должно быть поле label -
+                значение которое вы хотите чтобы модель научилась предсказывать. И все остальные значения должны быть в
+                формате
+                float32 от 0 до 1
+            </div>
+        </div>
+        <div class="dataset__tabliza">
+            <table border="1" class="dataset__table">
+                <thead>
+                <tr class="tabliza__mainTitle">
+                    <th colspan="5">Ваши датасеты:</th>
+                </tr>
+                <tr>
+                    <td>Название</td>
+                    <td>Размер</td>
+                    <td>shape</td>
+                    <td>Дата создания</td>
+                    <td></td>
+                </tr>
+                </thead>
+
+                <tr>
+                    <td>....</td>
+                    <td>....</td>
+                    <td>....</td>
+                    <td>....</td>
+                    <td>
+                        <button onclick="show_add_dataset_form()">Добавить</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename= 'js/load_datasets.js') }}"></script>
+
+
+    <div class="add_dataset_form", style="display: none">
+
+
+        <div id="input">
+            <form class="dataset_form_container validate-form" id="add_datasetForm" style="margin:auto;" action="/__add_dataset" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="dataset_email" value="">
+            <span class="dataset_form_title">
+                Введите название датасета
+            </span>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">dataset name</span>
+                    </div>
+                    <input type="text" class="form-control" id="dataset_name" aria-describedby="basic-addon3" name="dataset_name">
+                </div>
+                <hr>
+                <div class="dataset_type">
+                    <p><b>Выберите тип задачи</b></p>
+                    <input type="radio" class="btn-check" name="radio_task_type" id="option1"  disabled="disabled">
+                    <label class="btn btn-secondary" for="option1"> Регрессия</label>
+
+                    <input type="radio" class="btn-check" name="radio_task_type" id="option2" checked="checked">
+                    <label class="btn btn-secondary" for="option2"> Классификация</label>
+                </div>
+
+                <hr>
+                <div class="form-group load_dataset">
+                    <label for="exampleFormControlFile1">Загрузите csv файл</label>
+                    <input name ="file_upload" type="file" class="form-control-file" id="file_upload" accept=".csv" >
+                </div>
+
+                <hr>
+
+                <button type="submit" class="btn btn-secondary button_dataset_load">Загрузить</button>
+                <div class="dataset_result">asd</div>
+            </form>
+        </div>
+    </div>
+
+    <div class="dataset_form" style="display: none;">
+
+
+        <div id="input">
+            <form class="dataset_form_container validate-form" id="myForm" style="margin:auto;">
+            <span class="dataset_form_title">
+                {{ dataset_name | default("Название датасета", true) }}
+            </span>
+                <div class="dataset_type">
+                    <p><b>Задача?</b></p>
+                    <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" disabled="disabled">
+                    <label class="btn btn-secondary" for="option1"> Регрессии</label>
+
+                    <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" checked="checked">
+                    <label class="btn btn-secondary" for="option2"> Классификации</label>
+                </div>
+                <div class="dataset_table_container">
+                    <script>
+                        var _table = {{ dataset_table_info | default("null", true) }};
+                        if (_table != null) {
+                            $(".dataset_table_container").html(_table);
+                        } else {
+                            $(".dataset_table_container").html("<table><thead><tr><th scope='col'>#</th><th scope='col'>col_0</th><th scope='col'>col_1</th><th scope='col'>col_2</th><th scope='col'>col_3</th><th scope='col'>col_4</th></tr></thead><tbody><tr><th scope='row'>1</th><td>Нулевая фича</td><td>Первая фича</td><td>Вторая фича</td><td>Третья фича</td><td>Четвёртая фича</td></tr></tbody></table>");
+                        }
+                    </script>
+
+                    <!--print(crushed_visitor.to_html())-->
+                </div>
+                <div class="dataset_select_column_to_predict">
+                    Выберите y_hat
+                    <select class="form-select form-select-sm"
+                            aria-label=".form-select-sm example">
+                        <option value="1" selected>One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+
+                <button>Редактировать</button>
+                <button>Выбрать датасет</button>
+                <div class="result"></div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

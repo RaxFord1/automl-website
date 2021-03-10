@@ -1,5 +1,5 @@
 $auth_token = localStorage.getItem('token');
-
+$SCRIPT_ROOT = "";//{{ request.script_root|tojson|safe }};
 
 /*
 

@@ -6,3 +6,16 @@ function myFunction() {
         x.style.display = "none";
     }
 }
+
+
+$(document).mouseup(function (e) {
+    var container = $(".register");
+    if (container.has(e.target).length === 0){
+        container.hide();
+    }
+    var container = $(".add_dataset_form");
+    if (container.has(e.target).length === 0){
+        container.hide();
+    }
+});
+

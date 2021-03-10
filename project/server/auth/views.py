@@ -6,6 +6,7 @@ from flask.views import MethodView
 
 from project.server import bcrypt, db, app
 from project.server.models import User, BlacklistToken
+
 auth_blueprint = Blueprint('auth', __name__)
 
 
@@ -54,7 +55,10 @@ class RegisterAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 202
 
+
 a = [None]
+
+
 class LoginAPI(MethodView):
     """
     User Login Resource
@@ -72,7 +76,7 @@ class LoginAPI(MethodView):
                 email=email
             ).first()
             if user and bcrypt.check_password_hash(
-                user.password, password
+                    user.password, password
             ):
                 auth_token = user.encode_auth_token(user.id)
                 if auth_token:

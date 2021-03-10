@@ -63,7 +63,7 @@
 </div>
 <div class="container">
   <div class="tabliza__home">
-    <table border="1">
+    <table border="1" class="index__table">
       <thead>
         <tr class="tabliza__mainTitle">
           <th colspan="4">Tablica</th>
@@ -90,93 +90,8 @@
       </tr>
     </table>
   </div>
-  <button type="button" class="btn fiolBtn" name="button">Приступить</button>
+  <button type="button" class="btn fiolBtn" name="start">Приступить</button>
 </div>
 
 
-{#<script type=text/javascript>#}
-{##}
-{#  const form = document.getElementById( "myForm" );#}
-{#  form.addEventListener( "submit", function ( event ) {#}
-{#    event.preventDefault();#}
-{#  });#}
-{##}
-{#    let a;#}
-{#    let last;#}
-{#      $(function() {#}
-{#        console.log("INIT"+String($SCRIPT_ROOT));#}
-{#        $('.login100-form-btn').bind('click', function() {#}
-{##}
-{#                if ($('input[name="email"]').val() == "" ){#}
-{#                    $(".result").addClass("error");#}
-{#                    $(".result").text("Все поля должны быть заполнены");#}
-{#                    return false;#}
-{#                }#}
-{#                if ($('input[name="password"]').val() == ""){#}
-{#                    $(".result").addClass("error");#}
-{#                    $(".result").text("Все поля должны быть заполнены");#}
-{#                    return false;#}
-{#                }#}
-{#                console.log("SEND_TO"+String($SCRIPT_ROOT));#}
-{#                var jqxhr = $.post( $SCRIPT_ROOT + '/auth/register',#}
-{#                {#}
-{#                    email: $('input[name="email"]').val(),#}
-{#                    password: $('input[name="password"]').val()#}
-{#                },#}
-{#                function(data) {#}
-{#                    alert( "success" );#}
-{#                    console.log( data );#}
-{#                    })#}
-{#                    .done(function(data) {#}
-{#                        alert( "second success" );#}
-{#                        console.log( data );#}
-{#                        a = data;#}
-{#                        $(".result").text(data.message);#}
-{#                    })#}
-{#                    .fail(function(data) {#}
-{##}
-{#                        console.log(data)#}
-{##}
-{#                        alert( "error" );#}
-{#                        $(".result").text(data.responseJSON.message);#}
-{#                    }).always(function(data){#}
-{#                        last = data;#}
-{##}
-{#                    });#}
-{#            });#}
-{#          });#}
-{##}
-{##}
-{##}
-{##}
-{#        /*$(function() {#}
-{#        console.log("INIT"+String($SCRIPT_ROOT));#}
-{#            $('input[name="submit"]').bind('click', function() {#}
-{#                console.log("SEND_TO"+String($SCRIPT_ROOT));#}
-{#              $.getJSON($SCRIPT_ROOT + '/auth/register', {#}
-{#                email: $('input[name="nickname"]').val(),#}
-{#                password: $('input[name="password"]').val()#}
-{#              }, function(data) {#}
-{#                console.log("result:"+String(data));#}
-{#                $(".result").text(data.result);#}
-{#              });#}
-{#              return false;#}
-{#            });#}
-{#          });*/#}
-{##}
-{##}
-{#          /*$(function() {#}
-{#        console.log("INIT"+String($SCRIPT_ROOT));#}
-{#            $('input[name="submit"]').bind('click', function() {#}
-{#                console.log("SEND_TO"+String($SCRIPT_ROOT));#}
-{#              $.getJSON($SCRIPT_ROOT + '/_add_numbers', {#}
-{#                a: 1,//$('input[name="a"]').val(),#}
-{#                b: 2,//$('input[name="b"]').val()#}
-{#              }, function(data) {#}
-{#                $(".result").text(data.result);#}
-{#              });#}
-{#              return false;#}
-{#            });#}
-{#          });*/#}
-{#    </script>#}
 {% endblock %}
