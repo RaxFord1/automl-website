@@ -146,13 +146,14 @@
                 {{ dataset_name | default("Название датасета", true) }}
             </span>
                 <div class="dataset_type">
-                    <p><b>Задача?</b></p>
-                    <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" disabled="disabled">
+                    <input type="radio" class="btn-check task_type_regression" name="task_type" id="option1" autocomplete="off" disabled="disabled">
                     <label class="btn btn-secondary" for="option1"> Регрессии</label>
 
-                    <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" checked="checked">
+                    <input type="radio" class="btn-check task_type_classification" name="task_type" id="option2" autocomplete="off" checked="checked">
                     <label class="btn btn-secondary" for="option2"> Классификации</label>
                 </div>
+
+
                 <div class="dataset_table_container">
                     <script>
                         var _table = {{ dataset_table_info | default("null", true) }};
@@ -165,16 +166,11 @@
 
                     <!--print(crushed_visitor.to_html())-->
                 </div>
-                <div class="dataset_select_column_to_predict">
-                    Выберите y_hat
-                    <select class="form-select form-select-sm"
-                            aria-label=".form-select-sm example">
-                        <option value="1" selected>One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
+                <div class="dataset_shape">
+                    Shape:
+                    <div class="dataset_shape_value">(0,)</div>
 
+                </div>
                 <button>Редактировать</button>
                 <button>Выбрать датасет</button>
                 <div class="result"></div>

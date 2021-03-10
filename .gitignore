@@ -4,6 +4,7 @@ venv
 temp
 tmp
 __pycache__
+datasets/
 
 *.pyc
 *.sqlite
@@ -12,3 +13,4 @@ __pycache__
 env.sh
 migrations
 *.idea
+/models/
