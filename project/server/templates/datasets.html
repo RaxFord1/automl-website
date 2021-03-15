@@ -98,25 +98,27 @@
     <script src="{{ url_for('static', filename= 'js/load_datasets.js') }}"></script>
 
 
-    <div class="add_dataset_form", style="display: none">
+    <div class="add_dataset_form" , style="display: none">
 
 
         <div id="input">
-            <form class="dataset_form_container validate-form" id="add_datasetForm" style="margin:auto;" action="/__add_dataset" method="post" enctype="multipart/form-data">
+            <form class="dataset_form_container validate-form" id="add_datasetForm" style="margin:auto;"
+                  action="/__add_dataset" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="dataset_email" value="">
-            <span class="dataset_form_title">
+                <span class="dataset_form_title">
                 Введите название датасета
             </span>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon3">dataset name</span>
                     </div>
-                    <input type="text" class="form-control" id="dataset_name" aria-describedby="basic-addon3" name="dataset_name">
+                    <input type="text" class="form-control" id="dataset_name" aria-describedby="basic-addon3"
+                           name="dataset_name">
                 </div>
                 <hr>
                 <div class="dataset_type">
                     <p><b>Выберите тип задачи</b></p>
-                    <input type="radio" class="btn-check" name="radio_task_type" id="option1"  disabled="disabled">
+                    <input type="radio" class="btn-check" name="radio_task_type" id="option1" disabled="disabled">
                     <label class="btn btn-secondary" for="option1"> Регрессия</label>
 
                     <input type="radio" class="btn-check" name="radio_task_type" id="option2" checked="checked">
@@ -126,7 +128,7 @@
                 <hr>
                 <div class="form-group load_dataset">
                     <label for="exampleFormControlFile1">Загрузите csv файл</label>
-                    <input name ="file_upload" type="file" class="form-control-file" id="file_upload" accept=".csv" >
+                    <input name="file_upload" type="file" class="form-control-file" id="file_upload" accept=".csv">
                 </div>
 
                 <hr>
@@ -141,15 +143,17 @@
 
 
         <div id="input">
-            <form class="dataset_form_container validate-form" id="myForm" style="margin:auto;">
+            <div class="dataset_form_container validate-form" id="myForm" style="margin:auto;">
             <span class="dataset_form_title">
                 {{ dataset_name | default("Название датасета", true) }}
             </span>
                 <div class="dataset_type">
-                    <input type="radio" class="btn-check task_type_regression" name="task_type" id="option1" autocomplete="off" disabled="disabled">
+                    <input type="radio" class="btn-check task_type_regression" name="task_type" id="option1"
+                           autocomplete="off" disabled="disabled">
                     <label class="btn btn-secondary" for="option1"> Регрессии</label>
 
-                    <input type="radio" class="btn-check task_type_classification" name="task_type" id="option2" autocomplete="off" checked="checked">
+                    <input type="radio" class="btn-check task_type_classification" name="task_type" id="option2"
+                           autocomplete="off" checked="checked">
                     <label class="btn btn-secondary" for="option2"> Классификации</label>
                 </div>
 
@@ -171,10 +175,32 @@
                     <div class="dataset_shape_value">(0,)</div>
 
                 </div>
-                <button>Редактировать</button>
-                <button>Выбрать датасет</button>
+                <!--<button>Редактировать</button>-->
+                <form class="select_model" id="datasetForm" style="margin:auto;"
+                  action="/train_model" method="post" >
+                    <div class="Choose size">
+                        Выберите максимальный размер модели
+                        <select class="form-select" aria-label="Default select example" name="model_size">
+                            <option value="1" selected>Маленькая</option>
+                            <option value="2">Средняя</option>
+                            <option value="3">Большая</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input name="dataset_name_hidden" value="" type="text" hidden/>
+                        <input type="hidden" name="dataset_email" value="">
+                    </div>
+                    <button type="submit" class="btn btn-secondary button_dataset_load">Тренировать</button>
+                    <button type="button" class="btn btn-secondary button_dataset_delete" onclick="delete_dataset()">Удалить</button>
+
+
+                </form>
+
+
+
                 <div class="result"></div>
-            </form>
+            </div>
+            </div>
         </div>
     </div>
 

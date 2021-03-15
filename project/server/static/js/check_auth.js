@@ -64,6 +64,7 @@ $(function () {
                 $(".result").text(data.message);
                 $auth_token = data['auth_token'];
                 localStorage.setItem('token', $auth_token);
+                document.location.reload();
             })
             .fail(function (data) {
 

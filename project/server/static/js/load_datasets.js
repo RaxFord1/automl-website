@@ -12,7 +12,7 @@ function load_dataset() {
             last_dataset = data
             data['result'].forEach(function (element) {
                 console.log(element);
-                $(".dataset__table").prepend("<tr><td>" + element + "</td><td>868КБ</td><td>(502,4)</td><td>26.01.2021</td><td><button onclick='select_dataset(" + element + ")'>Выбрать</button></td></tr>");
+                $(".dataset__table").prepend(`<tr><td> ${element} </td><td>868КБ</td><td>(502,4)</td><td>26.01.2021</td><td><button onclick="select_dataset('${element}')">Выбрать</button></td></tr>`);
             })
 
             console.log("SUCCESS LOAD_DATASET");
@@ -29,7 +29,7 @@ function load_dataset() {
 
 load_dataset()
 
-
+var selected_dataset;
 function select_dataset(element) {
     var datasets_result = $.ajax({
         url: $SCRIPT_ROOT + "/__select_dataset",
@@ -43,10 +43,13 @@ function select_dataset(element) {
                 $(".task_type_regression").prop('checked', true);
             }
             last_dataset = data;
+            $(".dataset_form_title").text(data['result']['name']);
             $(".dataset_table_container").html(data['result']['table']);
             $(".dataset_shape_value").text(data['result']['shape']);
+            $("input[name='dataset_name_hidden']").val(data['result']['name']);
             console.log("SUCCESS LOAD_DATASET");
             console.log(data);
+            selected_dataset = data['result']['name'];
         }
     }).fail(function (data) {
         document.location.reload();
@@ -65,4 +68,25 @@ function select_dataset(element) {
 
 function show_add_dataset_form() {
     $(".add_dataset_form").css("display", "block");
+}
+
+function delete_dataset() {
+    var datasets_result = $.ajax({
+        url: $SCRIPT_ROOT + "/__delete_dataset",
+        data: {dataset: selected_dataset},
+        type: "POST",
+        headers: {"Authorization": "Bearer " + $auth_token},
+        success: function (data) {
+            alert("DONE")
+            document.location.reload();
+        }
+    }).fail(function (data) {
+        alert("Couldn't delete dataset")
+    }).always(function (data) {
+        $(".dataset_form").css("display", "block");
+
+    });
+    console.log("dataset_result:" + datasets_result)
+
+
 }
