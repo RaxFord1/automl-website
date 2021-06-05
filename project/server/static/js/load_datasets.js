@@ -12,7 +12,7 @@ function load_dataset() {
             last_dataset = data
             data['result'].forEach(function (element) {
                 console.log(element);
-                $(".dataset__table").prepend(`<tr><td> ${element} </td><td>868КБ</td><td>(502,4)</td><td>26.01.2021</td><td><button onclick="select_dataset('${element}')">Выбрать</button></td></tr>`);
+                $(".dataset__table").prepend(`<tr><td> ${element} </td><td>868КБ</td><td>(502,4)</td><td>26.01.2021</td><td><button onclick="select_dataset('${element}')">Обрати</button></td></tr>`);
             })
 
             console.log("SUCCESS LOAD_DATASET");
@@ -30,6 +30,7 @@ function load_dataset() {
 load_dataset()
 
 var selected_dataset;
+
 function select_dataset(element) {
     var datasets_result = $.ajax({
         url: $SCRIPT_ROOT + "/__select_dataset",

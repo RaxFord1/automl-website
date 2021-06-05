@@ -37,6 +37,9 @@ blanc {
     margin-bottom: 10px;
 }
 
+.logout{
+    display: none;
+}
 .btn-primary {
     color: #fff;
     width: 70px;

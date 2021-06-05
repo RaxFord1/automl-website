@@ -66,8 +66,11 @@ class LoginAPI(MethodView):
 
     def post(self):
         # get the post data
+        print("Login in")
         post_data = request.get_json()
+        print("Request Form")
         print(request.form)
+
         email = request.form['email']
         password = request.form['password']
         try:
@@ -75,6 +78,7 @@ class LoginAPI(MethodView):
             user = User.query.filter_by(
                 email=email
             ).first()
+            print("ASDSADASD")
             if user and bcrypt.check_password_hash(
                     user.password, password
             ):
@@ -86,9 +90,11 @@ class LoginAPI(MethodView):
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'auth_token': auth_token,
+                        'auth_token': auth_token.decode("UTF-8"),
                         'email': email
                     }
+                    print("Response Obj")
+                    print(responseObject)
                     return make_response(jsonify(responseObject)), 200
             else:
                 responseObject = {
@@ -97,6 +103,7 @@ class LoginAPI(MethodView):
                 }
                 return make_response(jsonify(responseObject)), 404
         except Exception as e:
+            print("EXCEPTION::::")
             print(e)
             responseObject = {
                 'status': 'fail',
@@ -142,6 +149,7 @@ class UserAPI(MethodView):
     def get(self):
         # get the auth token
         auth_header = request.headers.get('Authorization')
+        print("Auth header")
         print(auth_header)
         if auth_header:
             try:

@@ -13,18 +13,18 @@
         <div id="input">
             <form class="login100-form validate-form" id="myForm" style="margin:auto;">
             <span class="login100-form-title">
-                Member registration
+                Вхід до аккаунту
             </span>
 
                 <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-                    <input class="input100" type="text" name="email" placeholder="Email">
+                    <input class="input100" type="text" name="email" placeholder="Ім'я">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                     <i class="fa fa-envelope" aria-hidden="true"></i>
                 </span>
                 </div>
                 <div class="wrap-input100 validate-input" data-validate="Password is required">
-                    <input class="input100" type="password" name="password" placeholder="Password">
+                    <input class="input100" type="password" name="password" placeholder="Пароль">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                     <i class="fa fa-lock" aria-hidden="true"></i>
@@ -32,27 +32,18 @@
                 </div>
                 <div class="container-login100-form-btn">
                     <button class="login100-form-btn">
-                        Login
+                        Логін
                     </button>
                 </div>
                 <div class="text-center p-t-12">
-                <span class="txt1">
-                    Forgot
-                </span>
-                    <a class="txt2" href="#">
-                        Username / Password?
-                    </a>
                 </div>
                 <div class="text-center p-t-136">
                     <a class="txt2" href="/register">
-                        Register
+                        Реєстрація
                         <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
                     </a>
                 </div>
             </form>
-            <button class="" onclick="check_status()">
-                check
-            </button>
             <div class="result"></div>
         </div>
     </div>
@@ -61,24 +52,24 @@
     <div class="container container__dataset">
         <div class="dataset__info__container">
             <div class="dataset__info">
-                Пожалуйста. Выберите свой датасет! Помните, что датасет должен быть в особом формате. В
-                нём должно быть поле label -
-                значение которое вы хотите чтобы модель научилась предсказывать. И все остальные значения должны быть в
-                формате
-                float32 от 0 до 1
+                Будь ласка. Выберіть свій датасет! Пам'ятайте, що датасет повинен бути у відповідному форматі. У
+                ньому повинне бути поле label -
+                значення, яке ви хочете, щоб модель навчилась інтерполювати. Всі остальні значеняя повинні бути у
+                форматі
+                float32 від 0 до 1
             </div>
         </div>
         <div class="dataset__tabliza">
             <table border="1" class="dataset__table">
                 <thead>
                 <tr class="tabliza__mainTitle">
-                    <th colspan="5">Ваши датасеты:</th>
+                    <th colspan="5">Ваші датасеты:</th>
                 </tr>
                 <tr>
-                    <td>Название</td>
-                    <td>Размер</td>
+                    <td>Назва</td>
+                    <td>Розмір</td>
                     <td>shape</td>
-                    <td>Дата создания</td>
+                    <td>Дата створення</td>
                     <td></td>
                 </tr>
                 </thead>
@@ -89,7 +80,7 @@
                     <td>....</td>
                     <td>....</td>
                     <td>
-                        <button onclick="show_add_dataset_form()">Добавить</button>
+                        <button onclick="show_add_dataset_form()">Додати</button>
                     </td>
                 </tr>
             </table>
@@ -106,7 +97,7 @@
                   action="/__add_dataset" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="dataset_email" value="">
                 <span class="dataset_form_title">
-                Введите название датасета
+                Введіть
             </span>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
@@ -119,22 +110,27 @@
                 <div class="dataset_type">
                     <p><b>Выберите тип задачи</b></p>
                     <input type="radio" class="btn-check" name="radio_task_type" id="option1" disabled="disabled">
-                    <label class="btn btn-secondary" for="option1"> Регрессия</label>
+                    <label class="btn btn-secondary" for="option1"> Регрессія</label>
 
                     <input type="radio" class="btn-check" name="radio_task_type" id="option2" checked="checked">
-                    <label class="btn btn-secondary" for="option2"> Классификация</label>
+                    <label class="btn btn-secondary" for="option2"> Классифікація</label>
                 </div>
 
                 <hr>
                 <div class="form-group load_dataset">
-                    <label for="exampleFormControlFile1">Загрузите csv файл</label>
+                    <label for="exampleFormControlFile1">Завантажте csv файл</label>
                     <input name="file_upload" type="file" class="form-control-file" id="file_upload" accept=".csv">
                 </div>
 
                 <hr>
+                <h4 style="color: red">Зверніть увагу, що вам потрібно вказати колонку з предиктором, як "target", або
+                    "label". Інакше процесс
+                    навчання не почнеться. Та тип потрібен бути int від 0 до нескінченності.</h4>
 
-                <button type="submit" class="btn btn-secondary button_dataset_load">Загрузить</button>
-                <div class="dataset_result">asd</div>
+                <hr>
+
+                <button type="submit" class="btn btn-secondary button_dataset_load">Завантажити</button>
+                <div class="dataset_result"></div>
             </form>
         </div>
     </div>
@@ -145,16 +141,16 @@
         <div id="input">
             <div class="dataset_form_container validate-form" id="myForm" style="margin:auto;">
             <span class="dataset_form_title">
-                {{ dataset_name | default("Название датасета", true) }}
+                {{ dataset_name | default("Назва датасету", true) }}
             </span>
                 <div class="dataset_type">
                     <input type="radio" class="btn-check task_type_regression" name="task_type" id="option1"
                            autocomplete="off" disabled="disabled">
-                    <label class="btn btn-secondary" for="option1"> Регрессии</label>
+                    <label class="btn btn-secondary" for="option1"> Регрессія</label>
 
                     <input type="radio" class="btn-check task_type_classification" name="task_type" id="option2"
                            autocomplete="off" checked="checked">
-                    <label class="btn btn-secondary" for="option2"> Классификации</label>
+                    <label class="btn btn-secondary" for="option2"> Классифікація</label>
                 </div>
 
 
@@ -177,31 +173,32 @@
                 </div>
                 <!--<button>Редактировать</button>-->
                 <form class="select_model" id="datasetForm" style="margin:auto;"
-                  action="/train_model" method="post" >
+                      action="/train_model" method="post">
                     <div class="Choose size">
-                        Выберите максимальный размер модели
+                        Оберіть максимальный розмір моделі
                         <select class="form-select" aria-label="Default select example" name="model_size">
-                            <option value="1" selected>Маленькая</option>
-                            <option value="2">Средняя</option>
-                            <option value="3">Большая</option>
+                            <option value="1" selected>Маленька</option>
+                            <option value="2">Средня</option>
+                            <option value="3">Велика</option>
                         </select>
                     </div>
                     <div>
                         <input name="dataset_name_hidden" value="" type="text" hidden/>
                         <input type="hidden" name="dataset_email" value="">
                     </div>
-                    <button type="submit" class="btn btn-secondary button_dataset_load">Тренировать</button>
-                    <button type="button" class="btn btn-secondary button_dataset_delete" onclick="delete_dataset()">Удалить</button>
+                    <button type="submit" class="btn btn-secondary button_dataset_load">Тренувати</button>
+                    <button type="button" class="btn btn-secondary button_dataset_delete" onclick="delete_dataset()">
+                        Видалити
+                    </button>
 
 
                 </form>
 
 
-
                 <div class="result"></div>
             </div>
-            </div>
         </div>
+    </div>
     </div>
 
 {% endblock %}

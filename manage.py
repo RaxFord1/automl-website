@@ -1,7 +1,7 @@
 # manage.py
 
 
-from project.server import app, db, models
+from project.server import app, db, model
 import os
 import unittest
 import coverage

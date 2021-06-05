@@ -1,18 +1,17 @@
 # project/server/__init__.py
 
-import os
 import json
-import pandas as pd
+import os
 import shutil
 import time
-
-from flask import Flask, render_template, jsonify, request, redirect, url_for, make_response, flash
-from flask_bcrypt import Bcrypt
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-
-import shlex
 from subprocess import Popen, PIPE
+
+import pandas as pd
+from flask import Flask, render_template, jsonify, request, redirect
+from flask import send_file
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "datasets")
@@ -46,6 +45,11 @@ app.register_blueprint(auth_blueprint)
 @app.route('/')
 def hello():
     return render_template('index.html')
+
+
+@app.route('/base')
+def base():
+    return render_template('base.html')
 
 
 @app.route('/_add_numbers')
@@ -86,6 +90,42 @@ def get_dataset():
             # print("result", result)
             return jsonify({"result": datasets})
     return jsonify(result=[])
+
+
+import zipfile
+
+
+def zipdir(path, ziph):
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file),
+                       os.path.relpath(os.path.join(root, file),
+                                       os.path.join(path, '..')))
+
+
+
+
+@app.route("/models/<email>/<dataset>/<model>")
+def download_model(email, dataset, model):
+    print("DOWNLOAD MODEL")
+    model_path = rf"D:/tmp/{email}/{dataset}/tuner-1/{model}/saved_model/"
+    print(model_path)
+    if os.path.exists(model_path):
+        files = os.listdir(model_path)
+        if len(files) >= 1:
+            file = files[0]
+            # zipfile
+            model_to_save = rf"D:\Колледж\курсовая 4 курс\flask-jwt-auth-master\project\server\model\{email}_{dataset}_{model}.zip"
+            zipf = zipfile.ZipFile(model_to_save, 'w', zipfile.ZIP_DEFLATED)
+            zipdir(model_path, zipf)
+            zipf.close()
+            return send_file(model_to_save, as_attachment=True)
+        else:
+            print("No Files Here")
+    else:
+        print("Path not exists")
+    return redirect("/results")
 
 
 @app.route('/__select_dataset')
@@ -225,14 +265,15 @@ def train_model():
     dir_files = os.listdir(dataset_path)
     csv_path = dir_files[0]
     if "__info.csv" in dir_files:
-        pass#read file
+        pass  # read file
     else:
         csv_path = dir_files[0]
 
     full_csv_path = os.path.join(dataset_path, csv_path)
 
-
-    out_path = "/tmp/" + user_email
+    out_path = "D:/tmp/" + user_email + "/" + dataset_name
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
 
     print("REQUEST:::", request)
     projectpath = request.form
@@ -249,3 +290,77 @@ def train_model():
     #    log.write(proc.stdout.read())
 
     return redirect("/datasets")
+
+
+@app.route('/results')
+def results_page():
+    return render_template('results.html')
+
+
+@app.route('/__load_results')
+def load_results():
+    print("__load_results #################################################################", )
+    result = check_status()
+    if result is False:
+        # print("AUTH FAILED")
+        return jsonify(result=[]), 401
+    email = result['data']['email']
+
+    # print("BODY:::::", request.args)
+    result_dict = {}
+    datasets_path = "D:/tmp/" + email + "/"
+    datasets = os.listdir(datasets_path)
+    tf_size_guidance = {
+        'compressedHistograms': 10,
+        'images': 0,
+        'scalars': 100,
+        'histograms': 1
+    }
+    from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+    for dataset_name in datasets:
+        dataset_path = os.path.join(datasets_path, dataset_name)
+        root_dataset_folders = os.listdir(dataset_path)
+        for folder in root_dataset_folders:
+            if "tuner" not in folder:
+                continue
+            else:
+
+                tuner_path = os.path.join(dataset_path, folder)
+
+                models = os.listdir(tuner_path)
+                if len(models) <= 1:
+                    continue
+
+                result_dict[dataset_name] = {}
+                print(tuner_path)
+                print(models)
+
+                for model in models:
+                    model_path = os.path.join(tuner_path, model)
+                    if len(os.listdir(model_path)) == 0:
+                        continue
+                    result_dict[dataset_name][model] = {}
+
+                    eval_folder = os.path.join(model_path, "eval")
+                    if not os.path.exists(eval_folder):
+                        continue
+                    history_file = os.listdir(eval_folder)
+                    if len(history_file) != 0:
+                        history_file = history_file[0]
+                        full_history_file_path = os.path.join(eval_folder, history_file)
+                        event_acc = EventAccumulator(full_history_file_path, tf_size_guidance)
+                        event_acc.Reload()
+                        result_dict[dataset_name][model]['accuracy'] = event_acc.Scalars('accuracy')[0].value
+                        result_dict[dataset_name][model]['auc_pr'] = event_acc.Scalars('auc_pr')[-1].value
+                        result_dict[dataset_name][model]['auc_roc'] = event_acc.Scalars('auc_roc')[-1].value
+                        result_dict[dataset_name][model]['loss'] = event_acc.Scalars('loss')[-1].value
+                        result_dict[dataset_name][model]['num_parameters'] = event_acc.Scalars('num_parameters')[
+                            -1].value
+
+    print(result_dict)
+
+    if len(result_dict) > 0:
+        return jsonify({"result": result_dict}), 200
+
+    else:
+        return jsonify(result=[])

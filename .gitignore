@@ -13,4 +13,4 @@ datasets/
 env.sh
 migrations
 *.idea
-/models/
+/project/server/model/

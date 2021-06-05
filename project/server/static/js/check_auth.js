@@ -11,8 +11,11 @@ function check_status() {
             console.log(data);
             $("button[name='Enter']").css("display", "none");
             $(".login__icon").css("background-color", "green");
+            $(".logout").css("display", "block");
             $(".status_entered").text("Добро пожаловать, " + String(data.data['email']))
+
             email = String(data.data['email'])
+            localStorage.setItem('email', email);
             $("input[name='dataset_email']").val(email)
         }
     }).fail(function (data) {
@@ -21,7 +24,6 @@ function check_status() {
         console.log(data)
     });
 }
-
 
 
 const form = document.getElementById("myForm");
@@ -80,8 +82,6 @@ $(function () {
         check_status()
     });
 });
-
-
 
 
 check_status();

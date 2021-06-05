@@ -25,17 +25,20 @@
             <logo><img src={{url_for('static',filename="img/logo.png" )}} alt="RaxFord - создатель данной платформы">
             </logo>
             <div class="nav__link">
-                <div class=""><a href="/">Главная</a></div>
-                <div class=""><a href="/datasets">Датасеты</a></div>
-                <div class=""><a href="#">Задачи</a></div>
-                <div class=""><a href="#">Результат</a></div>
+                <div class=""><a href="/">Головна</a></div>
+                <div class=""><a href="/datasets">Датасети</a></div>
+                <div class=""><a href="/results">Результат</a></div>
             </div>
             <div class="uchet">
                 <blanc class="status_entered"></blanc>
                 <login>
                     <div class="login__icon"></div>
-                    <button type="button" class="btn btn-primary" name="Enter" onclick="myFunction()">Вход</button>
+                    <button type="button" class="btn btn-primary" name="Enter" onclick="myFunction()">Вхід</button>
                 </login>
+                <div class="logout">
+                    <div class="logout__icon"></div>
+                    <button type="button" class="btn btn-primary" name="Logout" onclick="logOut()">Вихід</button>
+                </div>
             </div>
         </nav>
     </div>

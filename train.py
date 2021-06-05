@@ -87,14 +87,14 @@ trainer = single_trainer.SingleTrainer(
     spec=spec)
 
 
-number_models = 1
-train_steps = 1
+number_models = 15
+train_steps = 100
 
 
 trainer.try_models(
     number_models=number_models,
     train_steps=train_steps,
-    eval_steps=1,
+    eval_steps=10,
     root_dir=out_path,  # "/tmp/run_example3",
     batch_size=64,
     experiment_name=experiment_name,  # "example3",

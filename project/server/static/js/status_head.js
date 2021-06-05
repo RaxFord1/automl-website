@@ -7,6 +7,26 @@ function myFunction() {
     }
 }
 
+function logOut() {
+    console.log("LogOut");
+    $.ajax({
+        url: "/auth/logout",
+        data: {},
+        type: "POST",
+        headers: {"Authorization": "Bearer " + $auth_token},
+        success: function (data) {
+            console.log("Successfully log out");
+            console.log(data);
+        }
+    }).fail(function (data) {
+        console.log("FAIL");
+        console.log($auth_token);
+        console.log(data)
+    }).always(function (data){
+        location.reload();
+    });
+
+}
 
 $(document).mouseup(function (e) {
     var container = $(".register");
