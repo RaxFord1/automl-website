@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <!--    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename= 'js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename= 'js/status_head.js') }}"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
     <style>
         .hero {
@@ -160,14 +159,13 @@
                     </li>
                 </ul>
                 <button class="btn btn-outline-light ml-3">EN | UA</button>
-                <button id="login-btn" class="btn btn-primary ml-3">Login</button>
-                <button id="logout-btn" class="btn btn-secondary ml-3">Logout</button>
+                <button id="login-btn" type="button" class="btn btn-primary ml-3" data-toggle="modal" data-target="#loginModal">Login</button>
+                <button id="logout-btn" class="btn btn-secondary ml-3" onclick="logOut()">Logout</button>
             </div>
         </div>
     </nav>
 
     {% block content %} {% endblock %}
-
 
     <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2024 RaxFord - AutoML</p>
@@ -178,34 +176,8 @@
         </div>
     </footer>
 
-
-    <script>
-        // Пример переменной состояния
-        var isLoggedIn = false; // Измените на true, чтобы имитировать вход пользователя
-
-        // Функция для переключения видимости кнопок
-        function toggleLoginLogout() {
-            var loginBtn = document.getElementById('login-btn');
-            var logoutBtn = document.getElementById('logout-btn');
-
-            if (isLoggedIn) {
-                loginBtn.style.display = 'none';
-                logoutBtn.style.display = 'inline-block';
-            } else {
-                loginBtn.style.display = 'inline-block';
-                logoutBtn.style.display = 'none';
-            }
-        }
-
-        // Вызов функции при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            toggleLoginLogout();
-        });
-    </script>
-
-
-    <script src="{{ url_for('static', filename= 'js/check_auth.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!--    <script src="{{ url_for('static', filename= 'js/auth.js') }}"></script>-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>

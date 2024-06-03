@@ -12,9 +12,9 @@ from project.server.models import User
 
 
 class RegisterForm(FlaskForm):
-    email = StringField('Ім\'я', validators=[DataRequired(), Email()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    submit = SubmitField('Реєстрація')
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Register')
 
 
 class RegisterAPI(MethodView):

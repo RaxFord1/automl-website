@@ -14,9 +14,6 @@ from .userAPI import UserAPI, check_status
 
 auth_blueprint = Blueprint('auth', __name__)
 
-
-
-
 registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
 user_view = UserAPI.as_view('user_api')

@@ -1,124 +1,136 @@
-<!-- Модальное окно для входа и регистрации -->
-<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<style>
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        top: -20%;
+    }
+</style>
+
+<div class="modal" id="loginModal">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
+            <!-- Modal Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="authModalLabel">Вхід до аккаунту</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h4 class="modal-title">Login</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
+
+            <!-- Modal Body -->
             <div class="modal-body">
-                <!-- Форма входа -->
-                <form id="loginForm" class="needs-validation" method="POST" novalidate>
+                <form id="loginForm">
                     {{ login_form.hidden_tag() }}
                     <div class="form-group">
-                        <label for="loginEmail">Ім'я</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroupPrepend">
-                                    <i class="fa fa-envelope" aria-hidden="true"></i>
-                                </span>
-                            </div>
-                            {{ login_form.email(class_='form-control', id='loginEmail', placeholder="Ім'я") }}
-                            <div class="invalid-feedback">
-                                Введіть правильний email: ex@abc.xyz
-                            </div>
-                        </div>
+                        {{ login_form.email.label }}
+                        {{ login_form.email(class="form-control") }}
                     </div>
                     <div class="form-group">
-                        <label for="loginPassword">Пароль</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroupPrepend">
-                                    <i class="fa fa-lock" aria-hidden="true"></i>
-                                </span>
-                            </div>
-                            {{ login_form.password(class_='form-control', id='loginPassword', placeholder='Пароль') }}
-                            <div class="invalid-feedback">
-                                Введіть пароль
-                            </div>
-                        </div>
+                        {{ login_form.password.label }}
+                        {{ login_form.password(class="form-control") }}
                     </div>
-                    {{ login_form.submit(class_='btn btn-primary btn-block') }}
+                    <div class="form-group">
+                        {{ login_form.submit(class="btn btn-primary") }}
+                    </div>
                 </form>
-
-                <!-- Форма регистрации -->
-                <form id="registerForm" class="needs-validation" method="POST" novalidate style="display: none;">
-                    {{ register_form.hidden_tag() }}
-                    <div class="form-group">
-                        <label for="registerEmail">Ім'я</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroupPrepend">
-                                    <i class="fa fa-envelope" aria-hidden="true"></i>
-                                </span>
-                            </div>
-                            {{ register_form.email(class_='form-control', id='registerEmail', placeholder="Ім'я") }}
-                            <div class="invalid-feedback">
-                                Введіть правильний email: ex@abc.xyz
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Пароль</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroupPrepend">
-                                    <i class="fa fa-lock" aria-hidden="true"></i>
-                                </span>
-                            </div>
-                            {{ register_form.password(class_='form-control', id='registerPassword', placeholder='Пароль') }}
-                            <div class="invalid-feedback">
-                                Введіть пароль
-                            </div>
-                        </div>
-                    </div>
-                    {{ register_form.submit(class_='btn btn-primary btn-block') }}
-                </form>
-
-                <div class="text-center mt-3">
-                    <a href="#" id="toggleAuthForms">Реєстрація</a>
-                </div>
             </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <a href="#" data-toggle="modal" data-target="#registerModal" data-dismiss="modal">Register</a>
+            </div>
+
         </div>
     </div>
 </div>
 
-<script>
-    // Bootstrap validation script
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            var forms = document.getElementsByClassName('needs-validation');
-            var validation = Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
+<!-- Register Modal -->
+<div class="modal" id="registerModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
-    // Toggle between login and registration forms
-    document.getElementById('toggleAuthForms').addEventListener('click', function(event) {
-        event.preventDefault();
-        var loginForm = document.getElementById('loginForm');
-        var registerForm = document.getElementById('registerForm');
-        var authModalLabel = document.getElementById('authModalLabel');
-        if (loginForm.style.display === 'none') {
-            loginForm.style.display = 'block';
-            registerForm.style.display = 'none';
-            authModalLabel.textContent = 'Вхід до аккаунту';
-            this.textContent = 'Реєстрація';
-        } else {
-            loginForm.style.display = 'none';
-            registerForm.style.display = 'block';
-            authModalLabel.textContent = 'Реєстрація';
-            this.textContent = 'Вхід до аккаунту';
-        }
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Register</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="registerForm">
+                    {{ register_form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ register_form.email.label }}
+                        {{ register_form.email(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ register_form.password.label }}
+                        {{ register_form.password(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ register_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <a href="#" data-toggle="modal" data-target="#loginModal" data-dismiss="modal">Login</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('#loginForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "/auth/login",
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        $auth_token = response['auth_token'];
+                        localStorage.setItem('token', $auth_token);
+                        localStorage.setItem('loggedIn', true);
+                        toggleLoginLogout();
+                         $('#loginModal').modal('hide');
+                    } else {
+                        alert('Login failed. Please check your email and password.');
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert(error.responseJSON.message);
+                },
+            });
+        });
+
+        $('#registerForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "/auth/register",
+                data: $(this).serialize(),
+                success: function(response) {
+                    console.log(response);
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        $('#registerModal').modal('hide');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert(error.responseJSON.message);
+                },
+            });
+        });
     });
 </script>
