@@ -1,55 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="register">
+    {% include 'login_modal.html' %}
 
-        <div class="logo">
-            <div class="circle_main"></div>
-            <div class="circle">
-                <div id="additional"></div>
-            </div>
-            <h4></h4>
-        </div>
-        <div id="input">
-            <form class="login100-form validate-form" id="myForm" style="margin:auto;">
-      <span class="login100-form-title">
-        Вхід до аккаунту
-      </span>
-
-                <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-                    <input class="input100" type="text" name="email" placeholder="Ім'я">
-                    <span class="focus-input100"></span>
-                    <span class="symbol-input100">
-          <i class="fa fa-envelope" aria-hidden="true"></i>
-        </span>
-                </div>
-                <div class="wrap-input100 validate-input" data-validate="Password is required">
-                    <input class="input100" type="password" name="password" placeholder="Пароль">
-                    <span class="focus-input100"></span>
-                    <span class="symbol-input100">
-          <i class="fa fa-lock" aria-hidden="true"></i>
-        </span>
-                </div>
-                <div class="container-login100-form-btn">
-                    <button class="login100-form-btn">
-                        Увійти
-                    </button>
-                </div>
-
-                <div class="text-center p-t-136">
-                    <a class="txt2" href="/register">
-                        Реєстрація
-                        <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-                    </a>
-                </div>
-            </form>
-            <div class="result"></div>
-        </div>
-    </div>
-
-    <div class="container" style="background: rgb(243 243 243); color: #0c0c0c; margin-top: 20px;">
-
-        <div class="video__home" style="float:left;margin-top: 9px;margin-right: 9px">
+    <div class="main_container" style="background: rgb(243 243 243); color: #0c0c0c; margin-top: 20px; padding: 10px;">
+        <div class="video__home" style="width:100%;text-align:center;padding-bottom:10px;">
+            <h1>Головна сторінка</h1>
+            <br>
             <iframe width="600" height="338" src="https://www.youtube.com/embed/zHcQPKP6NpM"
                     title="YouTube video player"
                     frameborder="0"
@@ -74,18 +31,18 @@
             <table border="1" class="index__table">
                 <thead>
                 <tr class="tabliza__mainTitle">
-                    <th colspan="4">Tablica</th>
+                    <th colspan="4">Можливі конфігурації</th>
                 </tr>
                 </thead>
 
-                <tr>
+                <tr style="text-align:center;">
                     <td>Задача</td>
-                    <td>Большая</td>
-                    <td>Средняя</td>
-                    <td>Малая</td>
+                    <td>Велика</td>
+                    <td>Середня</td>
+                    <td>Мала</td>
                 </tr>
                 <tr>
-                    <td>Классифікація таблиць</td>
+                    <td>Класифікація таблиць</td>
                     <td>50 моделей; 10000 кроків</td>
                     <td>25 моделей; 1000 кроків</td>
                     <td>5 моделей; 100 кроків</td>

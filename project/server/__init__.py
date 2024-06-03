@@ -14,25 +14,19 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "datasets")
-ALLOWED_EXTENSIONS = {'csv'}
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 CORS(app)
+
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), "datasets")
+
+ALLOWED_EXTENSIONS = {'csv'}
 
 app_settings = os.getenv(
     'APP_SETTINGS',
     'project.server.config.DevelopmentConfig'
 )
 app.config.from_object(app_settings)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:8462@localhost:5432/'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/'
 
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
@@ -40,6 +34,11 @@ db = SQLAlchemy(app)
 from project.server.auth.views import auth_blueprint, check_status
 
 app.register_blueprint(auth_blueprint)
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/')
@@ -76,6 +75,11 @@ def dataset_page():
     return render_template('datasets.html')
 
 
+@app.route('/about')
+def about_page():
+    return render_template('about.html')
+
+
 @app.route('/__get_datasets')
 def get_dataset():
     # print("__GETDATASETS", )
@@ -102,8 +106,6 @@ def zipdir(path, ziph):
             ziph.write(os.path.join(root, file),
                        os.path.relpath(os.path.join(root, file),
                                        os.path.join(path, '..')))
-
-
 
 
 @app.route("/models/<email>/<dataset>/<model>")
@@ -160,7 +162,6 @@ def select_dataset():
             "shape": str(df_shape),
             "date": str(date_created),
             "task_type": str(task_type)
-
         }
         # print("result", result)
         # for i in result:

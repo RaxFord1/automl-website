@@ -12,7 +12,9 @@ from flask_migrate import Migrate, MigrateCommand
 
 os.environ['APP_SETTINGS'] = "project.server.config.DevelopmentConfig"
 os.environ['SECRET_KEY'] = "Qsq7owM3Ut"
-os.environ['DATABASE_PASSWORD'] = "8462"
+os.environ['DATABASE_PASSWORD'] = "postgres"
+os.environ['JSONIFY_PRETTYPRINT_REGULAR'] = "false"
+
 COV = coverage.coverage(
     branch=True,
     include='project/*',
