@@ -31,9 +31,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhos
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
-from project.server.auth.views import auth_blueprint, check_status
+# оно должно быть здесь ибо bcrypt не импортируется иначе. мне лень рефакторить
+from project.server.auth import auth_blueprint, check_status, LoginAPI, RegisterAPI, LoginForm, RegisterForm
+
 
 app.register_blueprint(auth_blueprint)
+
+
+@app.context_processor
+def inject_forms():
+    return dict(login_form=LoginForm(), register_form=RegisterForm())
 
 
 def allowed_file(filename):
