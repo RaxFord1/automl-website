@@ -8,117 +8,206 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename= 'js/login.js') }}"></script>
+    <script src="{{ url_for('static', filename= 'js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename= 'js/status_head.js') }}"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        .header {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            background-color: #f3f3f3;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .hero {
+            position: relative;
+            background: url('https://source.unsplash.com/1600x900/?technology') no-repeat center center;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Затемнение фона */
+            z-index: 1;
+        }
+        .hero .container {
+            position: relative;
+            z-index: 2;
+        }
+        .hero .btn {
+            margin: 10px;
+        }
+        .hero .btn {
+            margin: 10px;
+        }
+        .card {
+            border: none;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .shadow {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .testimonial-card {
+            border: none;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .feature-card {
+            background: #f7f7f9;
+            border-radius: 10px;
+        }
+        .how-it-works {
+            background: #f1f3f4;
+            padding: 40px 0;
+        }
+        .how-it-works .card {
+            background: none;
+        }
+        .dark-section {
+            background: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+        .testimonial-section {
+            background: #f7f7f9;
+            padding: 40px 0;
         }
 
-        .header__nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #007bff;
+        }
+        .contact-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .contact-form .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
             padding: 10px;
-            width: 80%;
         }
-
-        .header__logo img {
-            height: 50px;
+        .contact-form .form-control:focus {
+            border-color: #007bff;
+            box-shadow: none;
         }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .nav-link {
-            margin: 0 10px;
-        }
-
-        .nav-link a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .nav-link a:hover {
-            color: #007bff;
-        }
-
-        .user-controls {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-        }
-
-        .button {
-            padding: 5px 10px;
-            color: #fff;
+        .contact-form .btn-submit {
+            display: block;
+            width: 100%;
             background-color: #007bff;
+            color: white;
+            padding: 12px;
             border: none;
             border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-
-        .button:hover {
+        .contact-form .btn-submit:hover {
             background-color: #0056b3;
-        }
-
-        .icon {
-            margin-right: 5px;
-            /* Icons can be added here */
-        }
-
-        .navbar-brand {
-            padding-top: var(--bs-navbar-brand-padding-y);
-            padding-bottom: var(--bs-navbar-brand-padding-y);
-            margin-right: var(--bs-navbar-brand-margin-end);
-            font-size: var(--bs-navbar-brand-font-size);
-            color: var(--bs-navbar-brand-color);
-            text-decoration: none;
-            white-space: nowrap;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <nav class="header__nav">
-            <a aria-current="page" class="navbar-brand active" href="/"><span>RaxFord - AutoML</span></a>
-            <div class="nav-links">
-                <div class="nav-link"><a href="/">Головна</a></div>
-                <div class="nav-link"><a href="/datasets">Датасети</a></div>
-                <div class="nav-link"><a href="/results">Результат</a></div>
-                <div class="nav-link"><a href="/about">Про нас</a></div>
+    {% include 'login_modal.html' %}
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">RaxFord - AutoML</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">О нас</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Функции</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/datasets">Датасеты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/results">Результаты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">Контакты</a>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-light ml-3">EN | UA</button>
+                <button id="login-btn" class="btn btn-primary ml-3">Login</button>
+                <button id="logout-btn" class="btn btn-secondary ml-3">Logout</button>
             </div>
-            <div class="user-controls">
-                <div class="login">
-                    <div class="icon"></div>
-                    <button type="button" class="button" name="Enter" onclick="myFunction()">Вхід</button>
-                </div>
-                <div class="logout">
-                    <div class="icon"></div>
-                    <button type="button" class="button" name="Logout" onclick="logOut()">Вихід</button>
-                </div>
-            </div>
-        </nav>
-    </div>
+        </div>
+    </nav>
 
     {% block content %} {% endblock %}
 
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2024 RaxFord - AutoML</p>
+        <div>
+            <a href="#" class="text-white mx-2">Facebook</a>
+            <a href="#" class="text-white mx-2">Twitter</a>
+            <a href="#" class="text-white mx-2">LinkedIn</a>
+        </div>
+    </footer>
+
+
+    <script>
+        // Пример переменной состояния
+        var isLoggedIn = false; // Измените на true, чтобы имитировать вход пользователя
+
+        // Функция для переключения видимости кнопок
+        function toggleLoginLogout() {
+            var loginBtn = document.getElementById('login-btn');
+            var logoutBtn = document.getElementById('logout-btn');
+
+            if (isLoggedIn) {
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-block';
+            } else {
+                loginBtn.style.display = 'inline-block';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        // Вызов функции при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleLoginLogout();
+        });
+    </script>
+
+
     <script src="{{ url_for('static', filename= 'js/check_auth.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

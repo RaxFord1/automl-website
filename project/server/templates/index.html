@@ -1,55 +1,145 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {% include 'login_modal.html' %}
 
-    <div class="main_container" style="background: rgb(243 243 243); color: #0c0c0c; margin-top: 20px; padding: 10px;">
-        <div class="video__home" style="width:100%;text-align:center;padding-bottom:10px;">
-            <h1>Головна сторінка</h1>
-            <br>
-            <iframe width="600" height="338" src="https://www.youtube.com/embed/zHcQPKP6NpM"
-                    title="YouTube video player"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
-        </div>
-        <div class="text_index" style="font-size:18px; text-align:justify;">Автоматичне машинне навчання (AutoML) -
-            процес автоматизації
-            наскрізного процесу застосування машинного навчання до завдань реального світу. У типовому додатку машинного
-            навчання користувач повинен застосувати відповідні методи попередньої обробки даних, конструювання ознак,
-            виділення ознак і вибору ознак, які роблять набір даних придатним для навчання машин. Після цих кроків
-            працівник повинен здійснити вибір алгоритму і оптимізацію гіперпараметров для максимізації прогнозованої
-            продуктивності кінцевої моделі. Оскільки багато з цих кроків не можуть здійснити люди, не будучи експертами,
-            був запропонований підхід AutoML як засноване на штучному інтелекті рішення для все зростаючої необхідності
-            застосування машинного навчання. Автоматизація наскрізного процесу застосування машинного навчання дає
-            перевагу отримання більш простих рішень, більш швидкого створення таких рішень і моделей, які часто
-            перевершують моделі, побудовані вручну.
-        </div>
-    </div>
-    <div class="container">
-        <div class="tabliza__home">
-            <table border="1" class="index__table">
-                <thead>
-                <tr class="tabliza__mainTitle">
-                    <th colspan="4">Можливі конфігурації</th>
-                </tr>
-                </thead>
 
-                <tr style="text-align:center;">
-                    <td>Задача</td>
-                    <td>Велика</td>
-                    <td>Середня</td>
-                    <td>Мала</td>
-                </tr>
-                <tr>
-                    <td>Класифікація таблиць</td>
-                    <td>50 моделей; 10000 кроків</td>
-                    <td>25 моделей; 1000 кроків</td>
-                    <td>5 моделей; 100 кроків</td>
-                </tr>
-            </table>
+   <header class="hero">
+        <div class="container">
+            <h1 class="display-4">Automated Machine Learning for Everyone</h1>
+            <p class="lead">Скорость. Точность. Эффективность.</p>
+            <a href="#" class="btn btn-primary btn-lg">Начать</a>
+            <a href="#" class="btn btn-secondary btn-lg">Узнать больше</a>
         </div>
-    </div>
+    </header>
+
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Основные преимущества</h2>
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card feature-card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="card-icon text-primary"><i class="fas fa-user-friends"></i></div>
+                        <h5 class="card-title">Простота использования</h5>
+                        <p class="card-text">Легко интегрируется и использует минимальные усилия для запуска.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="card-icon text-primary"><i class="fas fa-tachometer-alt"></i></div>
+                        <h5 class="card-title">Высокая производительность</h5>
+                        <p class="card-text">Оптимизированные алгоритмы для максимальной точности.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="card-icon text-primary"><i class="fas fa-tasks"></i></div>
+                        <h5 class="card-title">Поддержка множества задач</h5>
+                        <p class="card-text">Обрабатывает широкий спектр задач машинного обучения.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="text-center mb-4">Как это работает</h2>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="card-icon text-primary"><i class="fas fa-upload"></i></div>
+                            <h5 class="card-title">Шаг 1: Загрузка данных</h5>
+                            <p class="card-text">Просто загрузите ваши данные для начала работы.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="card-icon text-primary"><i class="fas fa-cogs"></i></div>
+                            <h5 class="card-title">Шаг 2: Выбор алгоритма</h5>
+                            <p class="card-text">Наши алгоритмы подберут лучший вариант для вас.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="card-icon text-primary"><i class="fas fa-chart-line"></i></div>
+                            <h5 class="card-title">Шаг 3: Получение результатов</h5>
+                            <p class="card-text">Получите результаты и оптимизируйте их.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <section class="dark-section">
+        <div class="container">
+            <h2 class="text-center mb-4">Демонстрация возможностей</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="container">
+            <h2 class="text-center mb-4">Отзывы клиентов</h2>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <h5 class="card-title">Иван Иванов</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Компания X</h6>
+                        <p class="card-text">"AutoML помогло нам сократить время на анализ данных вдвое!"</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <h5 class="card-title">Мария Смирнова</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Компания Y</h6>
+                        <p class="card-text">"Очень удобный инструмент, рекомендую!"</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <h5 class="card-title">Алексей Коваленко</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Компания Z</h6>
+                        <p class="card-text">"Лучший инструмент для автоматизации машинного обучения!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container my-5">
+        <h2 class="text-center mb-4">Форма обратной связи</h2>
+        <form class="contact-form">
+            <div class="form-group">
+                <label for="name">Имя</label>
+                <input type="text" class="form-control" id="name" placeholder="Ваше имя">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Ваш Email">
+            </div>
+            <div class="form-group">
+                <label for="message">Сообщение</label>
+                <textarea class="form-control" id="message" rows="3" placeholder="Ваше сообщение"></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Отправить сообщение</button>
+        </form>
+    </section>
 
 
 {% endblock %}
