@@ -87,9 +87,14 @@ def about_page():
     return render_template('about.html')
 
 
+@app.route('/functions')
+def about_functions():
+    return render_template('functions.html')
+
+
 @app.route('/__get_datasets')
 def get_dataset():
-    # print("__GETDATASETS", )
+    print("__GETDATASETS", )
     result = check_status()
     if result is not False:
         email = result['data']['email']
@@ -98,7 +103,7 @@ def get_dataset():
         if os.path.exists(path_to_dataset_folder):
             datasets = os.listdir(path_to_dataset_folder)
             result = json.dumps(datasets)
-            # print("result", result)
+            print("result", result)
             return jsonify({"result": datasets})
     return jsonify(result=[])
 
@@ -139,17 +144,17 @@ def download_model(email, dataset, model):
 
 @app.route('/__select_dataset')
 def select_dataset():
-    # print("__SELECTDATASETS", )
+    print("__SELECTDATASETS", )
     result = check_status()
     if result is False:
-        # print("AUTH FAILED")
+        print("AUTH FAILED")
         return jsonify(result=[]), 401
     email = result['data']['email']
 
-    # print("BODY:::::", request.args)
+    print("BODY:::::", request.args)
     dataset_name = request.args['dataset']
     path_to_dataset_folder = os.path.join("datasets", email, dataset_name)
-    # print("FULL_DATASET_PATH", path_to_dataset_folder)
+    print("FULL_DATASET_PATH", path_to_dataset_folder)
 
     if os.path.exists(path_to_dataset_folder):
         dataset_files = os.listdir(path_to_dataset_folder)
@@ -170,9 +175,9 @@ def select_dataset():
             "date": str(date_created),
             "task_type": str(task_type)
         }
-        # print("result", result)
-        # for i in result:
-        #    print(type(result[i]))
+        print("result", result)
+        for i in result:
+           print(type(result[i]))
         return jsonify({"result": result}), 200
 
     else:
@@ -181,13 +186,14 @@ def select_dataset():
 
 @app.route('/__add_dataset', methods=['POST'])
 def add_dataset():
-    # print("__ADDDATASETS___________________________________________________________", )
-    # print("ALL_DATA::::", request.form)
+    print("__ADDDATASETS___________________________________________________________", )
+    print("ALL_DATA::::", request.form)
     email = request.form['dataset_email']
     if email == "":
+
         return redirect("/datasets")
     path_to_dataset_folder = os.path.join("datasets", email)
-    # print("FILES:::", request.files)
+    print("FILES:::", request.files)
     if 'file_upload' not in request.files:
         print("No file ")
         return redirect("/datasets")
@@ -206,9 +212,9 @@ def add_dataset():
         # print(os.getcwd())
         file.save(filename)
 
-    # print("REQUEST:::", request)
+    print("REQUEST:::", request)
     projectpath = request.form
-    # print("FORM :::", projectpath)
+    print("FORM :::", projectpath)
     return redirect("/datasets")
 
 
