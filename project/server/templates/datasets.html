@@ -1,157 +1,165 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class="container">
+        <p></p>
+        <h1 class="text-center">Ваші датасети</h1>
 
-    {% include 'login_modal.html' %}
+        <hr>
 
-    <div class="main_container">
-        <div class="dataset__info__container">
-            <div class="dataset__info">
-                Будь ласка. Оберіть свій датасет! Пам'ятайте, що датасет повинен бути у відповідному форматі. У
-                ньому повинне бути поле label -
-                значення, яке ви хочете, щоб модель навчилась інтерполювати. Всі остальні значеняя повинні бути у
-                форматі
-                float32 від 0 до 1
+        <style>
+            .dataset_form_title {
+              font-size: 24px;
+              font-weight: bold;
+              color: #495057;
+            }
+            .form-group {
+              margin-bottom: 1.5rem;
+            }
+        </style>
+
+        <div class="container">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Завантажити датасет</h3>
+              </div>
+              <div class="card-body">
+                <form class="dataset_form_container validate-form" id="add_datasetForm" action="/__add_dataset" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="dataset_email" value="">
+                  <div class="form-group">
+                    <label for="dataset_name" class="dataset_form_title">Назва датасету</label>
+                    <input type="text" class="form-control" id="dataset_name" name="dataset_name" placeholder="Enter dataset name">
+                  </div>
+                  <hr>
+                  <div class="dataset_type form-group">
+                    <p class="mb-1"><b>Оберіть тип завдання</b></p>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="option1" name="radio_task_type" class="form-check-input" disabled="disabled">
+                      <label class="form-check-label" for="option1">Регрессія</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="option2" name="radio_task_type" class="form-check-input" checked="checked">
+                      <label class="form-check-label" for="option2">Класифікація</label>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="form-group">
+                    <label for="file_upload">Завантажте csv файл</label>
+                    <input type="file" class="form-control-file" id="file_upload" name="file_upload" accept=".csv">
+                  </div>
+                  <hr>
+                  <div class="alert alert-danger" role="alert">
+                    Будь ласка, будьте уважні, та вкажіть обов'язково стовбець, який треба предиктити як "target" або "label". Інакше процес тренування не почнеться! Тип стовпцю має бути від 0 до нескінченності.
+                  </div>
+                  <hr>
+                  <button type="submit" class="btn btn-primary btn-block button_dataset_load">Завантажити</button>
+                  <div class="dataset_result mt-3"></div>
+                </form>
+              </div>
             </div>
         </div>
-        <div class="dataset__tabliza">
-            <table border="1" class="dataset__table">
-                <thead>
-                <tr class="tabliza__mainTitle">
-                    <th colspan="5">Ваші датасети:</th>
-                </tr>
-                <tr>
-                    <td>Назва</td>
-                    <td>Розмір</td>
-                    <td>shape</td>
-                    <td>Дата створення</td>
-                    <td></td>
-                </tr>
-                </thead>
 
+        <div class="card mt-4">
+          <div class="card-header">
+            <h3>Your Datasets</h3>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered dataset__table">
+              <thead>
                 <tr>
-                    <td>....</td>
-                    <td>....</td>
-                    <td>....</td>
-                    <td>....</td>
-                    <td>
-                        <button onclick="show_add_dataset_form()">Додати</button>
-                    </td>
+                  <th>Назва</th>
+                  <th>Вага</th>
+                  <th>Розмірність</th>
+                  <th>Дата завантаження</th>
+                  <th></th>
                 </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
+                </tr>
+              </tbody>
             </table>
+          </div>
         </div>
     </div>
+
+
     <script src="{{ url_for('static', filename= 'js/load_datasets.js') }}"></script>
 
 
-    <div class="add_dataset_form" style="display: none">
-
-
-        <div id="input">
-            <form class="dataset_form_container validate-form" id="add_datasetForm" style="margin:auto;"
-                  action="/__add_dataset" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="dataset_email" value="">
+    <div class="modal fade" id="datasetModal" tabindex="-1" role="dialog" aria-labelledby="datasetModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="datasetModalLabel">Dataset Form</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="dataset_form">
+            <div id="input">
+              <div class="dataset_form_container validate-form" id="myForm">
                 <span class="dataset_form_title">
-                Введіть
-            </span>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon3">dataset name</span>
-                    </div>
-                    <input type="text" class="form-control" id="dataset_name" aria-describedby="basic-addon3"
-                           name="dataset_name">
-                </div>
-                <hr>
-                <div class="dataset_type">
-                    <p><b>Выберите тип задачи</b></p>
-                    <input type="radio" class="btn-check" name="radio_task_type" id="option1" disabled="disabled">
-                    <label class="btn btn-secondary" for="option1"> Регрессія</label>
-
-                    <input type="radio" class="btn-check" name="radio_task_type" id="option2" checked="checked">
-                    <label class="btn btn-secondary" for="option2"> Классифікація</label>
+                  Назва датасету
+                </span>
+                <div class="dataset_type my-3">
+                  <p><b>Выберите тип задачи</b></p>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input task_type_regression" name="task_type" id="option1" autocomplete="off" disabled="disabled">
+                    <label class="form-check-label" for="option1">Регрессія</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input task_type_classification" name="task_type" id="option2" autocomplete="off" checked="checked">
+                    <label class="form-check-label" for="option2">Классифікація</label>
+                  </div>
                 </div>
 
-                <hr>
-                <div class="form-group load_dataset">
-                    <label for="exampleFormControlFile1">Завантажте csv файл</label>
-                    <input name="file_upload" type="file" class="form-control-file" id="file_upload" accept=".csv">
+                <div class="dataset_table_container my-3">
+                  <script>
+                    var _table = {{ dataset_table_info | default("null", true) }};
+                    if (_table != null) {
+                      document.querySelector(".dataset_table_container").innerHTML = _table;
+                    } else {
+                      document.querySelector(".dataset_table_container").innerHTML = "<table class='table'><thead><tr><th scope='col'>#</th><th scope='col'>col_0</th><th scope='col'>col_1</th><th scope='col'>col_2</th><th scope='col'>col_3</th><th scope='col'>col_4</th></tr></thead><tbody><tr><th scope='row'>1</th><td>Нулевая фича</td><td>Первая фича</td><td>Вторая фича</td><td>Третья фича</td><td>Четвёртая фича</td></tr></tbody></table>";
+                    }
+                  </script>
                 </div>
 
-                <hr>
-                <h4 style="color: red">Зверніть увагу, що вам потрібно вказати колонку з предиктором, як "target", або
-                    "label". Інакше процесс
-                    навчання не почнеться. Та тип потрібен бути int від 0 до нескінченності.</h4>
-
-                <hr>
-
-                <button type="submit" class="btn btn-secondary button_dataset_load">Завантажити</button>
-                <div class="dataset_result"></div>
-            </form>
-        </div>
-    </div>
-
-    <div class="dataset_form" style="display: none;">
-        <div id="input">
-            <div class="dataset_form_container validate-form" id="myForm" style="margin:auto;">
-            <span class="dataset_form_title">
-                {{ dataset_name | default("Назва датасету", true) }}
-            </span>
-                <div class="dataset_type">
-                    <input type="radio" class="btn-check task_type_regression" name="task_type" id="option1"
-                           autocomplete="off" disabled="disabled">
-                    <label class="btn btn-secondary" for="option1"> Регрессія</label>
-
-                    <input type="radio" class="btn-check task_type_classification" name="task_type" id="option2"
-                           autocomplete="off" checked="checked">
-                    <label class="btn btn-secondary" for="option2"> Классифікація</label>
+                <div class="dataset_shape my-3">
+                  <p><b>Shape:</b></p>
+                  <div class="dataset_shape_value">(0,)</div>
                 </div>
 
-
-                <div class="dataset_table_container">
-                    <script>
-                        var _table = {{ dataset_table_info | default("null", true) }};
-                        if (_table != null) {
-                            $(".dataset_table_container").html(_table);
-                        } else {
-                            $(".dataset_table_container").html("<table><thead><tr><th scope='col'>#</th><th scope='col'>col_0</th><th scope='col'>col_1</th><th scope='col'>col_2</th><th scope='col'>col_3</th><th scope='col'>col_4</th></tr></thead><tbody><tr><th scope='row'>1</th><td>Нулевая фича</td><td>Первая фича</td><td>Вторая фича</td><td>Третья фича</td><td>Четвёртая фича</td></tr></tbody></table>");
-                        }
-                    </script>
-
-                    <!--print(crushed_visitor.to_html())-->
-                </div>
-                <div class="dataset_shape">
-                    Shape:
-                    <div class="dataset_shape_value">(0,)</div>
-
-                </div>
-                <!--<button>Редактировать</button>-->
-                <form class="select_model" id="datasetForm" style="margin:auto;"
-                      action="/train_model" method="post">
-                    <div class="Choose size">
-                        Оберіть максимальный розмір моделі
-                        <select class="form-select" aria-label="Default select example" name="model_size">
-                            <option value="1" selected>Маленька</option>
-                            <option value="2">Средня</option>
-                            <option value="3">Велика</option>
-                        </select>
-                    </div>
-                    <div>
-                        <input name="dataset_name_hidden" value="" type="text" hidden/>
-                        <input type="hidden" name="dataset_email" value="">
-                    </div>
-                    <button type="submit" class="btn btn-secondary button_dataset_load">Тренувати</button>
-                    <button type="button" class="btn btn-secondary button_dataset_delete" onclick="delete_dataset()">
-                        Видалити
-                    </button>
-
-
+                <form class="select_model" id="datasetForm" action="/train_model" method="post">
+                  <div class="form-group">
+                    <label for="model_size">Оберіть максимальный розмір моделі</label>
+                    <select class="form-control" id="model_size" name="model_size">
+                      <option value="1" selected>Маленька</option>
+                      <option value="2">Средня</option>
+                      <option value="3">Велика</option>
+                    </select>
+                  </div>
+                  <input name="dataset_name_hidden" value="" type="text" hidden/>
+                  <input type="hidden" name="dataset_email" value="">
+                  <button type="submit" class="btn btn-primary button_dataset_load">Тренувати</button>
+                  <button type="button" class="btn btn-danger button_dataset_delete" onclick="delete_dataset()">Видалити</button>
                 </form>
-
-
-                <div class="result"></div>
+                <div class="result mt-3"></div>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
-    </div>
+  </div>
 
 {% endblock %}

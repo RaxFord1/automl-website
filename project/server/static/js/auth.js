@@ -82,6 +82,8 @@ function check_status() {
     });
 }
 
+check_status();
+
 setInterval(() => {
     check_status();
 }, 3*60*1000)

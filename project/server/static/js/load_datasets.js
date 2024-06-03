@@ -21,10 +21,13 @@ function load_dataset() {
     }).fail(function (data) {
         console.log("dataset_load FAIL");
         console.log($auth_token);
-        console.log(data)
+        console.log(data);
         last_dataset = data;
+    }).always(function () {
+        check_status();
     });
-    console.log("dataset_result:" + datasets_result)
+    console.log("dataset_result:")
+    console.log(datasets_result)
 }
 
 load_dataset()
@@ -51,6 +54,7 @@ function select_dataset(element) {
             console.log("SUCCESS LOAD_DATASET");
             console.log(data);
             selected_dataset = data['result']['name'];
+            $("#datasetModal").modal('show');
         }
     }).fail(function (data) {
         document.location.reload();
@@ -63,8 +67,6 @@ function select_dataset(element) {
 
     });
     console.log("dataset_result:" + datasets_result)
-
-
 }
 
 function show_add_dataset_form() {
@@ -88,6 +90,4 @@ function delete_dataset() {
 
     });
     console.log("dataset_result:" + datasets_result)
-
-
 }
