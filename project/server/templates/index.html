@@ -86,7 +86,7 @@
                     </div>
                 </div>
         </div>
-    </section>
+   </section>
 
    <section class="dark-section">
         <div class="container">
@@ -99,9 +99,9 @@
                 </div>
             </div>
         </div>
-    </section>
+   </section>
 
-    <section class="testimonial-section">
+   <section class="testimonial-section">
         <div class="container">
             <h2 class="text-center mb-4">Відгуки кліентів</h2>
             <div class="row text-center">
@@ -128,26 +128,8 @@
                 </div>
             </div>
         </div>
-    </section>
+   </section>
 
-    <section class="container my-5">
-        <h2 class="text-center mb-4">Форма зворотнього зв`язку</h2>
-        <form class="contact-form">
-            <div class="form-group">
-                <label for="name">Ім'я</label>
-                <input type="text" class="form-control" id="name" placeholder="Ваше ім'я">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Ваш Email">
-            </div>
-            <div class="form-group">
-                <label for="message">Повідомлення</label>
-                <textarea class="form-control" id="message" rows="3" placeholder="Ваше повідомлення"></textarea>
-            </div>
-            <button type="submit" class="btn-submit">Відправити повідомлення</button>
-        </form>
-    </section>
-
+   {% include 'feedback.html' %}
 
 {% endblock %}

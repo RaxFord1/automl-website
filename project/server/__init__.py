@@ -53,20 +53,6 @@ def hello():
     return render_template('index.html')
 
 
-@app.route('/base')
-def base():
-    return render_template('base.html')
-
-
-@app.route('/_add_numbers')
-def add_numbers():
-    print("ADD NUMBERS:::::::::")
-    a = request.args.get('a', 0, type=int)
-    b = request.args.get('b', 0, type=int)
-    print(a, b)
-    return jsonify(result=a + b)
-
-
 @app.route('/register')
 def register_page():
     return render_template('register.html')
@@ -85,6 +71,11 @@ def dataset_page():
 @app.route('/about')
 def about_page():
     return render_template('about.html')
+
+
+@app.route('/contacts')
+def contacts():
+    return render_template('contacts.html')
 
 
 @app.route('/functions')
@@ -271,9 +262,12 @@ def train_model():
     elif str(model_size_choice) == "3":
         model_size = "large"
 
+    print(f"Selected model_size: {model_size}")
+
     dataset_name = request.form['dataset_name_hidden']
     dataset_path = os.path.join(app.config['UPLOAD_FOLDER'], user_email, dataset_name)
     if not os.path.exists(dataset_path):
+        print(f"{dataset_path} not found. redirecting!")
         return redirect("/datasets")
 
     dir_files = os.listdir(dataset_path)
@@ -287,6 +281,7 @@ def train_model():
 
     out_path = "D:/tmp/" + user_email + "/" + dataset_name
     if not os.path.exists(out_path):
+        print(f"making new dir: {out_path}")
         os.makedirs(out_path)
 
     print("REQUEST:::", request)
