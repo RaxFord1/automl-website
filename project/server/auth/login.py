@@ -44,6 +44,7 @@ class LoginAPI(MethodView):
                         user.password, password
                 ):
                     auth_token = user.encode_auth_token(user.id)
+                    print("auth_token:", auth_token)
                     if auth_token:
                         auth_tocket_jwt = jwt.decode(auth_token, app.config.get('SECRET_KEY'), algorithms=["HS256"])
 
@@ -51,7 +52,7 @@ class LoginAPI(MethodView):
                         response_object = {
                             'status': 'success',
                             'message': 'Successfully logged in.',
-                            'auth_token': auth_token.decode("UTF-8"),
+                            'auth_token': auth_token,
                             'email': email
                         }
                         print("Response Obj")

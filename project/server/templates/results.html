@@ -1,45 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container">
-        <div class="dataset__info__container">
-            <div class="dataset__info">
-                Сторінка з результатами. Ви можете ознайомитись з результатами трейну на цій сторінці.
-            </div>
+    <div class="container mt-5">
+        <div class="alert alert-info" role="alert">
+            Сторінка з результатами. Ви можете ознайомитись з результатами трейну на цій сторінці.
         </div>
+
         <div class="results_container">
-
-            <details>
-                <summary>Приклад</summary>
-                <table border="1" class="result__table" id="example_unique_name_u_never_guess"
-                       style="margin: 0px; margin-top: 5px;">
-                    <thead>
-                    <tr>
-                        <td>№</td>
-                        <td>accuracy</td>
-                        <td>auc_pr</td>
-                        <td>auc_roc</td>
-                        <td>loss</td>
-                        <td>num_parameters</td>
-                        <td></td>
-                    </tr>
-                    </thead>
-
-                    <tr>
-                        <td>1</td>
-                        <td>від 0 до 1</td>
-                        <td>від 0 до 1</td>
-                        <td>від 0 до 1</td>
-                        <td>від 0 до нескінченності</td>
-                        <td>від 0 до нескінченності</td>
-                        <td>
-                            <button onclick="show_add_dataset_form()">Завантажити</button>
-                        </td>
-                    </tr>
-                </table>
-            </details>
-
-
+            <div class="card">
+                <div class="card-header">
+                    <h5>Приклад</h5>
+                </div>
+                <div class="card-body">
+                    <details>
+                        <summary>Показати приклад</summary>
+                        <table class="table table-bordered table-hover mt-3">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">№</th>
+                                <th scope="col">accuracy</th>
+                                <th scope="col">auc_pr</th>
+                                <th scope="col">auc_roc</th>
+                                <th scope="col">loss</th>
+                                <th scope="col">num_parameters</th>
+                                <th scope="col">Дія</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>від 0 до 1</td>
+                                <td>від 0 до 1</td>
+                                <td>від 0 до 1</td>
+                                <td>від 0 до нескінченності</td>
+                                <td>від 0 до нескінченності</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" onclick="show_add_dataset_form()">Завантажити</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </details>
+                </div>
+            </div>
         </div>
     </div>
     <script src="{{ url_for('static', filename= 'js/load_results.js') }}"></script>

@@ -15,25 +15,32 @@ function load_results() {
             results = data
             Object.keys(results.result).forEach(function (dataset) {
                 let result_container = document.getElementsByClassName("results_container");
-                result_container[0].innerHTML += `<details>
-                <summary>${dataset}</summary>
-                        <table border="1" className="result__table" id="${dataset}"
-                               style="margin: 0px; margin-top: 5px;">
-                            <thead>
-                            <tr>
-                                <td>№</td>
-                                <td>accuracy</td>
-                                <td>auc_pr</td>
-                                
-                                <td>auc_roc</td>
-                                <td>loss</td>
-                                <td>num_parameters</td>
-                                
-                                <td></td>
-                            </tr>
-                            </thead>
-                        </table>
-                </details>`
+                result_container[0].innerHTML += `
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5>${dataset}</h5>
+                    </div>
+                    <div class="card-body">
+                        <details>
+                            <summary>${dataset}</summary>
+                            <table class="table table-bordered table-hover mt-3" id="${dataset}">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <td scope="col">№</td>
+                                        <td scope="col">accuracy</td>
+                                        <td scope="col">auc_pr</td>
+                                        <td scope="col">auc_roc</td>
+                                        <td scope="col">loss</td>
+                                        <td scope="col">num_parameters</td>
+                                        <td scope="col">Дія</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </details>
+                    </div>
+                </div>`
                 let table = document.getElementById(dataset);
                 Object.keys(results.result[dataset]).forEach(function (model, num) {
                     var newRow = table.insertRow(num+1);
