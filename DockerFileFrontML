@@ -1,0 +1,38 @@
+# Use the official Ubuntu base image
+FROM continuumio/miniconda3
+
+WORKDIR /app
+
+COPY . .
+
+RUN conda env create -f environment.yml
+
+SHELL ["conda", "run", "-n", "flask-jwt-auth-master2", "/bin/bash", "-c"]
+
+EXPOSE 5000
+
+CMD ["conda", "run", "--no-capture-output", "-n", "flask-ml", "flask", "create_db"]
+
+CMD ["conda", "run", "--no-capture-output", "-n", "flask-ml", "flask", "run", "--host=0.0.0.0"]
+
+#RUN apt-get update && apt-get install -y \
+#    build-essential \
+#    gcc g++ gfortran \
+#    libffi-dev libssl-dev \
+#    libxml2 libxml2-dev \
+#    libxslt1-dev \
+#    libjpeg62-turbo-dev zlib1g-dev \
+#    && apt-get clean \
+#    && rm -rf /var/lib/apt/lists/*
+
+#RUN pip install --upgrade pip setuptools
+#
+## Create a working directory
+
+#
+## Create a virtual environment
+#RUN python3 -m venv venv
+#
+## Activate the virtual environment and install dependencies
+## Note: Use '&&' to chain commands to ensure the virtual environment is activated before installing dependencies
+#RUN . venv/bin/activate && pip install --upgrade pip setuptools && pip install --no-cache-dir -r requirements.txt

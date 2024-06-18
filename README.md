@@ -1,5 +1,46 @@
 # Flask JWT Auth
 
+# How to start
+
+0. Clone the project
+
+```cmd
+git clone <path_to_project>.git
+```
+
+1. Create .env file based on .env_example
+
+2. Start Docker services
+``` cmd
+docker-compose up --build
+```
+
+3. Run migrations
+
+3.1. Connect to `front-ml`
+```commandline
+docker ps -a
+
+docker exec -it <container_id> /bin/bash
+```
+
+3.2. Run migrations
+``` bash
+conda activate flask-ml
+
+export FLASK_APP=app.py
+flask db init
+flask db migrate -m "Initial migration."
+flask db upgrade
+```
+
+4. (Optional) Stop services
+``` cmd
+docker-compose down
+```
+
+
+
 [![Build Status](https://travis-ci.org/realpython/flask-jwt-auth.svg?branch=master)](https://travis-ci.org/realpython/flask-jwt-auth)
 
 ## Want to learn how to build this project?
@@ -48,15 +89,16 @@ $ psql
 Create the tables and run the migrations:
 
 ```sh
-$ python manage.py create_db
-$ python manage.py db init
-$ python manage.py db migrate
+$ flask create_db
+$ flask db init
+$ flask db migrate
+$ flask db upgrade
 ```
 
 ### Run the Application
 
 ```sh
-$ python manage.py runserver
+$ flask run
 ```
 
 Access the application at the address [http://localhost:5000/](http://localhost:5000/)
@@ -64,7 +106,7 @@ Access the application at the address [http://localhost:5000/](http://localhost:
 > Want to specify a different port?
 
 > ```sh
-> $ python manage.py runserver -h 0.0.0.0 -p 8080
+> $ python app.py runserver -h 0.0.0.0 -p 8080
 > ```
 
 ### Testing
@@ -72,11 +114,11 @@ Access the application at the address [http://localhost:5000/](http://localhost:
 Without coverage:
 
 ```sh
-$ python manage.py test
+$ python app.py test
 ```
 
 With coverage:
 
 ```sh
-$ python manage.py cov
+$ python app.py cov
 ```

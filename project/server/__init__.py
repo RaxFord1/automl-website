@@ -26,7 +26,7 @@ app_settings = os.getenv(
     'project.server.config.DevelopmentConfig'
 )
 app.config.from_object(app_settings)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/'
 
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
@@ -65,17 +65,17 @@ def login_page():
 
 @app.route('/datasets')
 def dataset_page():
-    return render_template('datasets.html')
+    return render_template('datasets.html', title="Датасети")
 
 
 @app.route('/about')
 def about_page():
-    return render_template('about.html')
+    return render_template('about.html', title="Про нас")
 
 
 @app.route('/contacts')
 def contacts():
-    return render_template('contacts.html')
+    return render_template('contacts.html', title="Контакти")
 
 
 @app.route('/functions')
@@ -298,12 +298,12 @@ def train_model():
     # with Popen(command, stdout=PIPE) as proc:
     #    log.write(proc.stdout.read())
 
-    return redirect("/datasets")
+    return redirect("/results")
 
 
 @app.route('/results')
 def results_page():
-    return render_template('results.html')
+    return render_template('results.html', title="Результати Трейну")
 
 
 @app.route('/__load_results')
@@ -311,11 +311,11 @@ def load_results():
     print("__load_results #################################################################", )
     result = check_status()
     if result is False:
-        # print("AUTH FAILED")
+        print("AUTH FAILED")
         return jsonify(result=[]), 401
     email = result['data']['email']
 
-    # print("BODY:::::", request.args)
+    print("BODY:::::", request.args)
     result_dict = {}
     datasets_path = "D:/tmp/" + email + "/"
     datasets = os.listdir(datasets_path)
@@ -325,6 +325,7 @@ def load_results():
         'scalars': 100,
         'histograms': 1
     }
+    print(f"DATASETS for {email}:: ", datasets)
     from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
     for dataset_name in datasets:
         dataset_path = os.path.join(datasets_path, dataset_name)

@@ -1,19 +1,32 @@
-# manage.py
+# app.py
+import logging
+import sys
 
-
-from project.server import app, db, model
 import os
 import unittest
 import coverage
 
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
 
+from flask.cli import FlaskGroup
+from flask_migrate import Migrate, log
+from project.server import app, db
+
+
+logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+def log_flags():
+    log.log(logging.WARNING, "Command-line arguments:")
+    for arg in sys.argv:
+        log.log(logging.WARNING, arg)
+
+
+log_flags()
 
 os.environ['APP_SETTINGS'] = "project.server.config.DevelopmentConfig"
 os.environ['SECRET_KEY'] = "Qsq7owM3Ut"
-os.environ['DATABASE_PASSWORD'] = "postgres"
 os.environ['JSONIFY_PRETTYPRINT_REGULAR'] = "false"
+os.environ['FLASK_APP'] = "app.py"
 
 COV = coverage.coverage(
     branch=True,
@@ -26,15 +39,12 @@ COV = coverage.coverage(
 )
 COV.start()
 
-
 migrate = Migrate(app, db)
-manager = Manager(app)
 
-# migrations
-manager.add_command('db', MigrateCommand)
+cli = FlaskGroup(app)
 
 
-@manager.command
+@cli.command("test")
 def test():
     """Runs the unit tests without test coverage."""
     tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
@@ -44,7 +54,7 @@ def test():
     return 1
 
 
-@manager.command
+@cli.command("cov")
 def cov():
     """Runs the unit tests with coverage."""
     tests = unittest.TestLoader().discover('project/tests')
@@ -63,17 +73,21 @@ def cov():
     return 1
 
 
-@manager.command
+@cli.command("create_db")
 def create_db():
     """Creates the db tables."""
     db.create_all()
 
 
-@manager.command
+@cli.command("drop_db")
 def drop_db():
     """Drops the db tables."""
     db.drop_all()
 
 
 if __name__ == '__main__':
-    manager.run()
+    log_flags()
+    try:
+        cli()
+    except Exception as e:
+        logging.error("An error occurred while running the CLI: %s", str(e))
