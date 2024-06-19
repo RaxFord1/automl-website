@@ -90,7 +90,7 @@ def callback(ch, method, properties, body):
     request = RequestStartTraining.from_str(received)
     logging.log(logging.ERROR, f" [x] request: {str(request)}")
 
-    start_training()
+    start_training(request)
 
     logging.log(logging.ERROR, " [x] Done")
     ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -121,8 +121,3 @@ if __name__ == '__main__':
             sys.exit(0)
         except SystemExit:
             os._exit(0)
-
-# FLAGS = flags.FLAGS
-
-
-# python train.py C:\\Users\\Dzund\\Projects\\model_search\\model_search\\default.csv /tmp/run_example3 -e exp1 -o qwerty1 -s little

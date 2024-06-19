@@ -43,8 +43,8 @@ class RequestStartTraining:
         return True
 
     @classmethod
-    def from_str(cls, json_str: str):
-        data = json.loads(json_str)
+    def from_str(cls, inputs: str):
+        data = json.loads(inputs)
         return cls(**data)
 
 
