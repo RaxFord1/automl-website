@@ -6,7 +6,6 @@ import os
 import unittest
 import coverage
 
-
 from flask.cli import FlaskGroup
 from flask_migrate import Migrate, log
 from project.server import app, db
@@ -23,17 +22,12 @@ def log_flags():
 
 log_flags()
 
-os.environ['APP_SETTINGS'] = "project.server.config.DevelopmentConfig"
-os.environ['SECRET_KEY'] = "Qsq7owM3Ut"
-os.environ['JSONIFY_PRETTYPRINT_REGULAR'] = "false"
-os.environ['FLASK_APP'] = "app.py"
-
 COV = coverage.coverage(
     branch=True,
     include='project/*',
     omit=[
         'project/tests/*',
-        'project/server/config.py',
+        'project/server/configs.py',
         'project/server/*/__init__.py'
     ]
 )

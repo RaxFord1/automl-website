@@ -1,10 +1,10 @@
 # project/server/__init__.py
 
 import json
+import logging
 import os
 import shutil
 import time
-from subprocess import Popen, PIPE
 
 import pandas as pd
 from flask import Flask, render_template, jsonify, request, redirect
@@ -13,20 +13,28 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
+from project import constants
+from project.server import config
+from project.server.rabbit_mq.start_training import send_message_to_start_training_channel, RequestStartTraining
+
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
 
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), "datasets")
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = config.get_val('JSONIFY_PRETTYPRINT_REGULAR', False)
+app.config['UPLOAD_FOLDER'] = config.get_val('UPLOAD_FOLDER', os.path.join(os.getcwd(), "datasets"))
 
 ALLOWED_EXTENSIONS = {'csv'}
 
 app_settings = os.getenv(
     'APP_SETTINGS',
-    'project.server.config.DevelopmentConfig'
+    'project.server.configs.DevelopmentConfig'
 )
+
 app.config.from_object(app_settings)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/'
+app.config[constants.SQLALCHEMY_DATABASE_URI] = config.get_val(constants.SQLALCHEMY_DATABASE_URI,
+                                                               'postgresql://postgres:postgres@localhost:5432/')
+
+logging.log(logging.WARNING, f"AAA: {app.config[constants.SQLALCHEMY_DATABASE_URI]}")
 
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
@@ -290,11 +298,15 @@ def train_model():
     # subprocess.Popen
 
     # command = shlex.split('python train.py C:\\Users\\Dzund\\Projects\\model_search\\model_search\\default.csv /tmp/run_example3 -e exp1 -o qwerty1 -s little')
-    command = ['python', 'train.py', full_csv_path, out_path,
-               '-e', dataset_name, '-o', user_email, '-s', model_size]
+    # command = ['python', 'train.py', full_csv_path, out_path,
+    #            '-e', dataset_name, '-o', user_email, '-s', model_size]
+    #
+    # print(command)
+    # Popen(command, stdout=PIPE, stderr=PIPE)
 
-    print(command)
-    Popen(command, stdout=PIPE, stderr=PIPE)
+    send_message_to_start_training_channel(RequestStartTraining(full_csv_path=full_csv_path,
+                                                                out_path=out_path, dataset_name=dataset_name,
+                                                                user_email=user_email, model_size=model_size))
     # with Popen(command, stdout=PIPE) as proc:
     #    log.write(proc.stdout.read())
 

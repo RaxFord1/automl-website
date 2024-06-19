@@ -1,3 +1,6 @@
+import logging
+import traceback
+
 import jwt
 
 from flask_wtf import FlaskForm
@@ -65,8 +68,8 @@ class LoginAPI(MethodView):
                     }
                     return make_response(jsonify(response_object)), 400
             except Exception as e:
-                print("EXCEPTION::::")
-                print(e)
+                traceback.print_exc()
+                logging.log(logging.ERROR, e)
                 response_object = {
                     'status': 'fail',
                     'message': 'Try again'

@@ -4,6 +4,8 @@ from typing import Dict
 
 import pika
 
+import project.server.config as cfg
+from project import constants
 from project.constants import RABBIT_MQ_START_TRAINING_CHANNEL
 
 
@@ -33,9 +35,11 @@ class RequestStartTraining:
 
 
 def send_message_to_start_training_channel(req: RequestStartTraining):
-    # все отправления пусть будут
+    rabbit_mq_host = cfg.get_val(constants.RABBIT_MQ_HOST)
+    if rabbit_mq_host is None:
+        raise "rabbit_mq_host is None. need to init config properly!"
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(rabbit_mq_host))
     channel = connection.channel()
 
     channel.queue_declare(queue=RABBIT_MQ_START_TRAINING_CHANNEL)
@@ -49,6 +53,8 @@ def send_message_to_start_training_channel(req: RequestStartTraining):
     channel.basic_publish(exchange='',
                           routing_key=RABBIT_MQ_START_TRAINING_CHANNEL,
                           body=msg)
+
+    connection.close()
 
 
 # Example usage

@@ -15,7 +15,7 @@ def ping_db():
         cur = conn.cursor()
 
         # Execute a command: this creates a new table
-        cur.execute("SELECT 1")
+        cur.execute("SELECT * from users;")
 
         # Retrieve query results
         result = cur.fetchone()
