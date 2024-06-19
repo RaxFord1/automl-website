@@ -1,5 +1,6 @@
 import json
 import logging
+import traceback
 from typing import Dict
 
 import pika
@@ -31,30 +32,42 @@ class RequestStartTraining:
 
     def validate(self) -> bool:
         # todo : finish
-        raise "Not Implemented"
+        if self.model_size == "" \
+                or self.out_path == "" \
+                or self.full_csv_path == "" \
+                or self.dataset_name == "" \
+                or self.user_email == "":
+            logging.log(logging.ERROR, "validate failed for:" + self.__str__())
+            return False
+
+        return True
 
 
 def send_message_to_start_training_channel(req: RequestStartTraining):
     rabbit_mq_host = cfg.get_val(constants.RABBIT_MQ_HOST)
     if rabbit_mq_host is None:
-        raise "rabbit_mq_host is None. need to init config properly!"
+        raise Exception("RABBIT_MQ_HOST is None. need to init config properly!")
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters(rabbit_mq_host))
-    channel = connection.channel()
+    try:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(rabbit_mq_host))
+        channel = connection.channel()
 
-    channel.queue_declare(queue=RABBIT_MQ_START_TRAINING_CHANNEL)
+        channel.queue_declare(queue=RABBIT_MQ_START_TRAINING_CHANNEL)
 
-    if req.validate() is not True:
-        logging.log(logging.ERROR, f"RequestStartTraining did not validate correctly: {str(req)}")
-        return
+        if req.validate() is not True:
+            logging.log(logging.ERROR, f"RequestStartTraining did not validate correctly: {str(req)}")
+            return
 
-    msg = str(req)
+        msg = str(req)
 
-    channel.basic_publish(exchange='',
-                          routing_key=RABBIT_MQ_START_TRAINING_CHANNEL,
-                          body=msg)
+        channel.basic_publish(exchange='',
+                              routing_key=RABBIT_MQ_START_TRAINING_CHANNEL,
+                              body=msg)
 
-    connection.close()
+        connection.close()
+    except Exception as e:
+        logging.log(logging.ERROR, e)
+        traceback.print_stack()
 
 
 # Example usage

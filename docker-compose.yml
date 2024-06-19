@@ -37,8 +37,14 @@ services:
       - "5001:5000"
     volumes:
       - .:/app
+      - datasets:${DATASETS_FOLDER}
+      - results:${RESULTS_FOLDER}
     networks:
       - app-network
 
 volumes:
   pgdata:
+
+  datasets:
+
+  results:

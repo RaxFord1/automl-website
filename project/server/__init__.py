@@ -21,7 +21,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
 
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = config.get_val('JSONIFY_PRETTYPRINT_REGULAR', False)
-app.config['UPLOAD_FOLDER'] = config.get_val('UPLOAD_FOLDER', os.path.join(os.getcwd(), "datasets"))
+app.config[constants.DATASETS_FOLDER] = config.get_val(constants.DATASETS_FOLDER, os.path.join(os.getcwd(), "datasets"))
 
 ALLOWED_EXTENSIONS = {'csv'}
 
@@ -95,10 +95,18 @@ def about_functions():
 def get_dataset():
     print("__GETDATASETS", )
     result = check_status()
+
+    datasets_path = config.get_val(constants.DATASETS_FOLDER)
+    if datasets_path is None:
+        logging.log(logging.ERROR, "datasets_path not inited")
+        return jsonify(result=[])
+
+    logging.log(logging.ERROR, "EEE::"+datasets_path)
+
     if result is not False:
         email = result['data']['email']
         # print()
-        path_to_dataset_folder = os.path.join("datasets", email)
+        path_to_dataset_folder = os.path.join(datasets_path, email)
         if os.path.exists(path_to_dataset_folder):
             datasets = os.listdir(path_to_dataset_folder)
             result = json.dumps(datasets)
@@ -152,7 +160,7 @@ def select_dataset():
 
     print("BODY:::::", request.args)
     dataset_name = request.args['dataset']
-    path_to_dataset_folder = os.path.join("datasets", email, dataset_name)
+    path_to_dataset_folder = os.path.join(config.get_val(constants.DATASETS_FOLDER, "datasets"), email, dataset_name)
     print("FULL_DATASET_PATH", path_to_dataset_folder)
 
     if os.path.exists(path_to_dataset_folder):
@@ -191,18 +199,23 @@ def add_dataset():
     if email == "":
 
         return redirect("/datasets")
-    path_to_dataset_folder = os.path.join("datasets", email)
+
     print("FILES:::", request.files)
     if 'file_upload' not in request.files:
-        print("No file ")
+        logging.log(logging.ERROR, "No file")
         return redirect("/datasets")
 
     file = request.files['file_upload']
     if file.filename == '':
-        print("No file 2")
+        logging.log(logging.ERROR, "No file 2")
         return redirect("/datasets")
     if file and allowed_file(file.filename):
-        path_dir = os.path.join(app.config['UPLOAD_FOLDER'], email, request.form['dataset_name'])
+        datasets_path = config.get_val(constants.DATASETS_FOLDER)
+        if datasets_path is None:
+            logging.log(logging.ERROR, "datasets_path not inited")
+            return redirect("/datasets")
+
+        path_dir = os.path.join(datasets_path, email, request.form['dataset_name'])
         if not os.path.exists(path_dir):
             print("Creating:::", path_dir)
             os.makedirs(path_dir)
@@ -273,7 +286,12 @@ def train_model():
     print(f"Selected model_size: {model_size}")
 
     dataset_name = request.form['dataset_name_hidden']
-    dataset_path = os.path.join(app.config['UPLOAD_FOLDER'], user_email, dataset_name)
+    datasets_folder_path = config.get_val(constants.DATASETS_FOLDER)
+    if datasets_folder_path is None:
+        logging.log(logging.ERROR, "constants.DATASETS_FOLDER is not inited")
+        return redirect("/results")
+
+    dataset_path = os.path.join(datasets_folder_path, user_email, dataset_name)
     if not os.path.exists(dataset_path):
         print(f"{dataset_path} not found. redirecting!")
         return redirect("/datasets")
@@ -287,7 +305,7 @@ def train_model():
 
     full_csv_path = os.path.join(dataset_path, csv_path)
 
-    out_path = "D:/tmp/" + user_email + "/" + dataset_name
+    out_path = os.getenv(constants.RESULTS_FOLDER, "/tmp") + "/" + user_email + "/" + dataset_name
     if not os.path.exists(out_path):
         print(f"making new dir: {out_path}")
         os.makedirs(out_path)
@@ -329,7 +347,7 @@ def load_results():
 
     print("BODY:::::", request.args)
     result_dict = {}
-    datasets_path = "D:/tmp/" + email + "/"
+    datasets_path = config.get_val(constants.DATASETS_FOLDER) + "/" + email + "/"
     datasets = os.listdir(datasets_path)
     tf_size_guidance = {
         'compressedHistograms': 10,
@@ -338,7 +356,7 @@ def load_results():
         'histograms': 1
     }
     print(f"DATASETS for {email}:: ", datasets)
-    from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+    # from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
     for dataset_name in datasets:
         dataset_path = os.path.join(datasets_path, dataset_name)
         root_dataset_folders = os.listdir(dataset_path)
@@ -370,14 +388,13 @@ def load_results():
                     if len(history_file) != 0:
                         history_file = history_file[0]
                         full_history_file_path = os.path.join(eval_folder, history_file)
-                        event_acc = EventAccumulator(full_history_file_path, tf_size_guidance)
-                        event_acc.Reload()
-                        result_dict[dataset_name][model]['accuracy'] = event_acc.Scalars('accuracy')[0].value
-                        result_dict[dataset_name][model]['auc_pr'] = event_acc.Scalars('auc_pr')[-1].value
-                        result_dict[dataset_name][model]['auc_roc'] = event_acc.Scalars('auc_roc')[-1].value
-                        result_dict[dataset_name][model]['loss'] = event_acc.Scalars('loss')[-1].value
-                        result_dict[dataset_name][model]['num_parameters'] = event_acc.Scalars('num_parameters')[
-                            -1].value
+                        # event_acc = EventAccumulator(full_history_file_path, tf_size_guidance)
+                        # event_acc.Reload()
+                        result_dict[dataset_name][model]['accuracy'] = 1#event_acc.Scalars('accuracy')[0].value
+                        result_dict[dataset_name][model]['auc_pr'] = 1#event_acc.Scalars('auc_pr')[-1].value
+                        result_dict[dataset_name][model]['auc_roc'] =1 #event_acc.Scalars('auc_roc')[-1].value
+                        result_dict[dataset_name][model]['loss'] =1# event_acc.Scalars('loss')[-1].value
+                        result_dict[dataset_name][model]['num_parameters'] = 1 #event_acc.Scalars('num_parameters')[-1].value
 
     print(result_dict)
 
