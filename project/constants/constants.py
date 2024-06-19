@@ -1,0 +1,1 @@
+RABBIT_MQ_START_TRAINING_CHANNEL = "start_training"
