@@ -1,103 +1,128 @@
-import argparse
-parser = argparse.ArgumentParser(description='Process some integers.')
-
-parser.add_argument("data_path", help="Path to csv file")
-parser.add_argument("out_path", help="Path to directory where to store experiments")
-parser.add_argument("-e", "--experiment_name", help="Name of experiment", default="experiment-1")
-parser.add_argument("-o", "--owner", help="Owner of experiment", default="qwerty")
-parser.add_argument("-s", "--size", help="Size of model-> 'little|medium|large'", choices=["little", "medium", "large"],
-                    default="little")
-
-args = parser.parse_args()
-
+import logging
+import os
+import time
 
 import pandas as pd
+import pika
+import sys
+from absl import app
+from absl import flags
 
-import model_search
+import project.constants as proj_constants
 from model_search import constants
 from model_search import single_trainer
 from model_search.data import csv_data
+from project.server import config
+from project.server.rabbit_mq.start_training import RequestStartTraining
 
 
-import sys
+def start_training(request: RequestStartTraining):
+    # data_filename = "model_search/data/testdata/csv_random_data.csv"
+    # data_filename = r"C:\\Users\\Dzund\\Projects\\model_search\\model_search\\default.csv"
 
-from absl import app
-from absl import flags
-from absl import logging
+    data_filename = request.full_csv_path
+    out_path = request.out_path
+    owner_name = request.user_email
+    experiment_name = request.dataset_name
+    model_size = request.model_size
+    spec = constants.DEFAULT_DNN
 
-FLAGS = flags.FLAGS
-
-
-# data_filename = "model_search/data/testdata/csv_random_data.csv"
-# data_filename = r"C:\\Users\\Dzund\\Projects\\model_search\\model_search\\default.csv"
-# spec = constants.DEFAULT_DNN
-
-data_filename = args.data_path
-out_path = args.out_path
-owner_name = args.owner
-experiment_name = args.experiment_name
-model_size = args.size
-
-
-sys.argv = sys.argv[:1]
-try:
-    app.run(lambda argv: None)
-except:
-    pass
-
-
-df = pd.read_csv(data_filename)
-
-logits_defaults = []
-for i in df.dtypes:
-    if i.base.name == "float64":
-        logits_defaults.append(0.0)
-    elif i.base.name == "int64":
-        logits_defaults.append(0)
-    else:
-        raise TypeError("Unknown datatype")
-
-
-try:
-    label_index = df.columns.get_loc("target")
-except KeyError:
+    sys.argv = sys.argv[:1]
     try:
-        label_index = df.columns.get_loc("label")
+        app.run(lambda argv: None)
+    except:
+        pass
+
+    df = pd.read_csv(data_filename)
+
+    logits_defaults = []
+    for i in df.dtypes:
+        if i.base.name == "float64":
+            logits_defaults.append(0.0)
+        elif i.base.name == "int64":
+            logits_defaults.append(0)
+        else:
+            raise TypeError("Unknown datatype")
+
+    try:
+        label_index = df.columns.get_loc("target")
     except KeyError:
-        label_index = 0
+        try:
+            label_index = df.columns.get_loc("label")
+        except KeyError:
+            label_index = 0
 
+    if model_size == "little":
+        number_models = 5
+        train_steps = 100
+        spec = constants.DEFAULT_DNN
+    elif model_size == "medium":
+        number_models = 10
+        train_steps = 1000
+        spec = constants.DEFAULT_DNN
+    else:
+        number_models = 20
+        train_steps = 10000
+        spec = constants.DEFAULT_DNN
 
-if model_size == "little":
-    number_models = 5
+    trainer = single_trainer.SingleTrainer(
+        data=csv_data.Provider(label_index=0, logits_dimension=2, record_defaults=logits_defaults,
+                               filename=data_filename),
+        spec=spec)
+
+    number_models = 15
     train_steps = 100
-    spec = constants.DEFAULT_DNN
-elif model_size == "medium":
-    number_models = 10
-    train_steps = 1000
-    spec = constants.DEFAULT_DNN
-else:
-    number_models = 20
-    train_steps = 10000
-    spec = constants.DEFAULT_DNN
+
+    trainer.try_models(
+        number_models=number_models,
+        train_steps=train_steps,
+        eval_steps=10,
+        root_dir=out_path,  # "/tmp/run_example3",
+        batch_size=64,
+        experiment_name=experiment_name,  # "example3",
+        experiment_owner=owner_name)  # "model_search_user")
 
 
-trainer = single_trainer.SingleTrainer(
-    data=csv_data.Provider(label_index=0, logits_dimension=2, record_defaults=logits_defaults,
-    filename=data_filename),
-    spec=spec)
+def callback(ch, method, properties, body):
+    received = body.decode()
+    logging.log(logging.ERROR, f" [x] Received {received}")
+
+    request = RequestStartTraining.from_str(received)
+    logging.log(logging.ERROR, f" [x] request: {str(request)}")
+
+    start_training()
+
+    logging.log(logging.ERROR, " [x] Done")
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-number_models = 15
-train_steps = 100
+def main():
+    rabbit_mq_host = config.get_val(proj_constants.RABBIT_MQ_HOST, None)
+    if rabbit_mq_host is None:
+        raise Exception("RABBIT_MQ_HOST is not defined in config")
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbit_mq_host))
+    channel = connection.channel()
+
+    channel.queue_declare(queue=proj_constants.RABBIT_MQ_START_TRAINING_CHANNEL)
+
+    channel.basic_consume(queue=proj_constants.RABBIT_MQ_START_TRAINING_CHANNEL, on_message_callback=callback)
+
+    print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.start_consuming()
 
 
-trainer.try_models(
-    number_models=number_models,
-    train_steps=train_steps,
-    eval_steps=10,
-    root_dir=out_path,  # "/tmp/run_example3",
-    batch_size=64,
-    experiment_name=experiment_name,  # "example3",
-    experiment_owner=owner_name)  # "model_search_user")
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
+
+# FLAGS = flags.FLAGS
+
 
 # python train.py C:\\Users\\Dzund\\Projects\\model_search\\model_search\\default.csv /tmp/run_example3 -e exp1 -o qwerty1 -s little

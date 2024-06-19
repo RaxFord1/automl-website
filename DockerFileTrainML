@@ -5,15 +5,15 @@ WORKDIR /app
 
 COPY . .
 
-RUN conda env create -f environment_conda_front.yml
+RUN conda env create -f environment_conda_train.yml
 
 #RUN export FLASK_APP=app.py && flask db init && flask db migrate -m "Initial migration." && flask db upgrade
 
 EXPOSE 5000
 
-#CMD ["conda", "run", "--no-capture-output", "-n", "flask-ml", "flask", "create_db"]
+CMD ["conda", "run", "--no-capture-output", "-n", "training-ml", "python", "train.py"]
 
-CMD ["conda", "run", "--no-capture-output", "-n", "flask-ml", "flask", "run", "--host=0.0.0.0"]
+#CMD ["conda", "run", "--no-capture-output", "-n", "flask-ml", "flask", "run", "--host=0.0.0.0"]
 
 
 #CMD ["/bin/sh", "-c", "sleep infinity"]

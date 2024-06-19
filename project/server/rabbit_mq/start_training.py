@@ -42,6 +42,11 @@ class RequestStartTraining:
 
         return True
 
+    @classmethod
+    def from_str(cls, json_str: str):
+        data = json.loads(json_str)
+        return cls(**data)
+
 
 def send_message_to_start_training_channel(req: RequestStartTraining):
     rabbit_mq_host = cfg.get_val(constants.RABBIT_MQ_HOST)
@@ -80,4 +85,9 @@ if __name__ == "__main__":
         model_size="large"
     )
 
-    print(str(request))  # Print the JSON representation of the object
+    json_str = str(request)
+    print("Serialized:", json_str)
+
+    parsed_request = RequestStartTraining.from_str(json_str)
+    print("Parsed:", parsed_request)
+    print("Parsed - full_csv_path:", parsed_request.full_csv_path)

@@ -1,7 +1,7 @@
 import jwt
 import datetime
 
-from project.server import app, db, bcrypt
+from project.server.server import app, db, bcrypt
 
 
 class BlacklistToken(db.Model):

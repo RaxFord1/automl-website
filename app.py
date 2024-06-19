@@ -8,7 +8,7 @@ import coverage
 
 from flask.cli import FlaskGroup
 from flask_migrate import Migrate, log
-from project.server import app, db
+from project.server.server import app, db
 
 
 logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -28,7 +28,7 @@ COV = coverage.coverage(
     omit=[
         'project/tests/*',
         'project/server/configs.py',
-        'project/server/*/__init__.py'
+        'project/server/*/server.py'
     ]
 )
 COV.start()

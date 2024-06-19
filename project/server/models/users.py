@@ -1,6 +1,6 @@
 import datetime
 
-from project.server import app, db, bcrypt
+from project.server.server import app, db, bcrypt
 import jwt
 
 from .black_list_token import BlacklistToken

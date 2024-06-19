@@ -1,4 +1,4 @@
-# project/server/__init__.py
+# project/server/server.py
 
 import json
 import logging

@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired, Email
 from flask import make_response, jsonify
 from flask.views import MethodView
 
-from project.server import db, app
+from project.server.server import db, app
 from project.server.models import User
 
 
