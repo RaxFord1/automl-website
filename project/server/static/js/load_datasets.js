@@ -10,9 +10,18 @@ function load_dataset() {
         headers: {"Authorization": "Bearer " + $auth_token},
         success: function (data) {
             last_dataset = data
-            data['result'].forEach(function (element) {
+            result = data['result']
+
+            console.log(result)
+            result.forEach(function (element) {
                 console.log(element);
-                $(".dataset__table").prepend(`<tr><td> ${element} </td><td>868КБ</td><td>(502,4)</td><td>26.01.2021</td><td><button onclick="select_dataset('${element}')">Обрати</button></td></tr>`);
+                let dimensions = "()"
+                if (element.dataset_type == "image") {
+                    dimensions = "(" + element.n_classes + "," + element.n_files + ")"
+                } else {
+                    dimensions = "(" + element.n_rows + "," + element.n_cols + ")"
+                }
+                $(".dataset__table").prepend(`<tr><td> ${element.dataset_name} </td><td>${element.size}КБ</td><td>${dimensions}</td><td>${element.upload_time}</td><td><button onclick="select_dataset('${element.dataset_name}')">Обрати</button></td></tr>`);
             })
 
             console.log("SUCCESS LOAD_DATASET");
@@ -41,15 +50,26 @@ function select_dataset(element) {
         type: "GET",
         headers: {"Authorization": "Bearer " + $auth_token},
         success: function (data) {
-            if (data['result']['task_type'] == "Classification") {
-                $(".task_type_classification").prop('checked', true);
+
+            debugger
+            if (data['result']['task_type'] == "classification") {
+                $("#task_type_classification").prop('checked', true);
             } else {
-                $(".task_type_regression").prop('checked', true);
+                $("#task_type_regression").prop('checked', true);
             }
+
+            if (data['result']['data_type'] == "image") {
+                $("#data_type_image").prop('checked', true);
+                $(".dataset_shape_value").text("(" + data['result'].n_classes + "," + data['result'].n_files + ")");
+                displayFilesByCategory(data['result']['category_has_files'])
+            } else {
+                $("#data_type_csv").prop('checked', true);
+                $(".dataset_shape_value").text(data['result']['shape']);
+                $(".dataset_table_container").html(data['result']['table']);
+            }
+
             last_dataset = data;
             $(".dataset_form_title").text(data['result']['name']);
-            $(".dataset_table_container").html(data['result']['table']);
-            $(".dataset_shape_value").text(data['result']['shape']);
             $("input[name='dataset_name_hidden']").val(data['result']['name']);
             console.log("SUCCESS LOAD_DATASET");
             console.log(data);
@@ -67,6 +87,41 @@ function select_dataset(element) {
 
     });
     console.log("dataset_result:" + datasets_result)
+}
+
+function displayFilesByCategory(data) {
+    const container = $('.dataset_table_container');
+
+    container.html("")
+
+    // Create table element
+    var table = $('<table class="table table-bordered"></table>');
+
+    // Create table head
+    var thead = $('<thead><tr><th>Category</th><th>Files</th></tr></thead>');
+    table.append(thead);
+
+    // Create table body
+    var tbody = $('<tbody></tbody>');
+
+    $.each(data, function(category, files) {
+        var fileLinks = files.map(function(file) {
+            return '<a href="' + file + '">' + file + '</a>';
+        }).join(", ");
+
+        var row = '<tr>' +
+                  '<td>' + category + '</td>' +
+                  '<td>' + fileLinks + '</td>' +
+                  '</tr>';
+
+        tbody.append(row);
+    });
+
+    // Append tbody to table
+    table.append(tbody);
+
+    // Append table to container
+    container.append(table);
 }
 
 function show_add_dataset_form() {

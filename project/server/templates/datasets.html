@@ -34,23 +34,36 @@
                   <div class="dataset_type form-group">
                     <p class="mb-1"><b>Оберіть тип завдання</b></p>
                     <div class="form-check form-check-inline">
-                      <input type="radio" id="option1" name="radio_task_type" class="form-check-input" disabled="disabled">
-                      <label class="form-check-label" for="option1">Регрессія</label>
+                      <input type="radio" id="radio_task_type_1" name="radio_task_type" class="form-check-input" disabled="disabled" value="regression">
+                      <label class="form-check-label" for="radio_task_type_1">Регрессія</label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input type="radio" id="option2" name="radio_task_type" class="form-check-input" checked="checked">
+                      <input type="radio" id="radio_task_type_2" name="radio_task_type" class="form-check-input" checked="checked" value="classification">
                       <label class="form-check-label" for="option2">Класифікація</label>
                     </div>
                   </div>
+
+                  <hr>
+                  <div class="dataset_type form-group">
+                    <p class="mb-1"><b>Оберіть тип даних</b></p>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="radio_data_type_1" name="radio_data_type" class="form-check-input" value="csv">
+                      <label class="form-check-label" for="radio_data_type_1">Таблиця</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="radio_data_type_2" name="radio_data_type" class="form-check-input" checked="checked" value="image">
+                      <label class="form-check-label" for="radio_data_type_2">Картинки</label>
+                    </div>
+                  </div>
+
                   <hr>
                   <div class="form-group">
                     <label for="file_upload">Завантажте csv файл</label>
                     <input type="file" class="form-control-file" id="file_upload" name="file_upload" accept=".csv">
                   </div>
                   <hr>
-                  <div class="alert alert-danger" role="alert">
-                    Будь ласка, будьте уважні, та вкажіть обов'язково стовбець, який треба предиктити як "target" або "label". Інакше процес тренування не почнеться! Тип стовпцю має бути від 0 до нескінченності.
-                  </div>
+                  <div class="alert alert-danger" role="alert" id="alert_window_dataset_load">
+                                      </div>
                   <hr>
                   <button type="submit" class="btn btn-primary btn-block button_dataset_load">Завантажити</button>
                   <div class="dataset_result mt-3"></div>
@@ -108,15 +121,27 @@
                 <span class="dataset_form_title">
                   Назва датасету
                 </span>
-                <div class="dataset_type my-3">
+                <div class="dataset_task_type my-3">
                   <p><b>Выберите тип задачи</b></p>
                   <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input task_type_regression" name="task_type" id="option1" autocomplete="off" disabled="disabled">
-                    <label class="form-check-label" for="option1">Регрессія</label>
+                    <input type="radio" class="form-check-input" id="task_type_regression" name="task_type" autocomplete="off" disabled>
+                    <label class="form-check-label" for="task_type_regression">Регрессія</label>
                   </div>
                   <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input task_type_classification" name="task_type" id="option2" autocomplete="off" checked="checked">
-                    <label class="form-check-label" for="option2">Классифікація</label>
+                    <input type="radio" class="form-check-input" id="task_type_classification" name="task_type" autocomplete="off" disabled>
+                    <label class="form-check-label" for="task_type_classification">Классифікація</label>
+                  </div>
+                </div>
+
+                <div class="dataset_data_type my-3">
+                  <p><b>Выберите тип задачи</b></p>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="data_type_csv" name="data_type"autocomplete="off" disabled>
+                    <label class="form-check-label" for="data_type_csv">CSV</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="data_type_image" name="data_type" autocomplete="off" disabled>
+                    <label class="form-check-label" for="data_type_image">Images</label>
                   </div>
                 </div>
 
@@ -161,5 +186,38 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function updateFileInput(type) {
+      console.log("aaa", type);
+      let acceptTypes;
+      if (type === 'csv') {
+          acceptTypes = '.csv';
+          $("#alert_window_dataset_load").html(`Будь ласка, будьте уважні, та вкажіть обов'язково стовбець, який треба предиктити як "target" або "label". Інакше процес тренування не почнеться! Тип стовпцю має бути від 0 до нескінченності.`)
+      } else if (type === 'image') {
+          acceptTypes = '.zip,.rar';
+          $("#alert_window_dataset_load").html(`Будь ласка, будьте уважні, та передавайте картинки у форматі "/класс/картинка.jpg". Інакше процес тренування не почнеться!`)
+      }
+
+      document.getElementById('file_upload').setAttribute('accept', acceptTypes);
+    }
+
+    // Attach event listeners to radio buttons
+    document.querySelectorAll('input[name="radio_data_type"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+          console.log("bbb", this.value);
+          updateFileInput(this.value);
+      });
+    });
+
+    // Initialize the file input accept attribute based on the default selected radio button
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("abs", document.querySelector('input[name="radio_data_type"]:checked'))
+      const checkedRadio = document.querySelector('input[name="radio_data_type"]:checked');
+      if (checkedRadio) {
+          updateFileInput(checkedRadio.value);
+      }
+    });
+  </script>
 
 {% endblock %}

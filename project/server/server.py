@@ -5,8 +5,12 @@ import logging
 import os
 import shutil
 import time
+from datetime import datetime
 
 import pandas as pd
+import rarfile
+import zipfile
+
 from flask import Flask, render_template, jsonify, request, redirect
 from flask import send_file
 from flask_bcrypt import Bcrypt
@@ -16,6 +20,10 @@ from flask_sqlalchemy import SQLAlchemy
 from project import constants
 from project.server import config
 from project.server.rabbit_mq.start_training import send_message_to_start_training_channel, RequestStartTraining
+from project.server.utils.dataset_info import get_description, get_folder_size, get_csv_dimensions, \
+    get_few_file_names_from_each_category, find_first_csv_file, get_desc, count_files_in_dir_total, \
+    count_files_in_dir_by_category
+from project.server.utils.rar_or_zip import extract_and_delete_rar, extract_and_delete_zip
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -23,7 +31,7 @@ CORS(app)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = config.get_val('JSONIFY_PRETTYPRINT_REGULAR', False)
 app.config[constants.DATASETS_FOLDER] = config.get_val(constants.DATASETS_FOLDER, os.path.join(os.getcwd(), "datasets"))
 
-ALLOWED_EXTENSIONS = {'csv'}
+ALLOWED_EXTENSIONS = {'csv', 'rar', 'zip'}
 
 app_settings = os.getenv(
     'APP_SETTINGS',
@@ -41,7 +49,6 @@ db = SQLAlchemy(app)
 
 # оно должно быть здесь ибо bcrypt не импортируется иначе. мне лень рефакторить
 from project.server.auth import auth_blueprint, check_status, LoginAPI, RegisterAPI, LoginForm, RegisterForm
-
 
 app.register_blueprint(auth_blueprint)
 
@@ -101,7 +108,7 @@ def get_dataset():
         logging.log(logging.ERROR, "datasets_path not inited")
         return jsonify(result=[])
 
-    logging.log(logging.ERROR, "EEE::"+datasets_path)
+    logging.log(logging.ERROR, "EEE::" + datasets_path)
 
     if result is not False:
         email = result['data']['email']
@@ -109,9 +116,15 @@ def get_dataset():
         path_to_dataset_folder = os.path.join(datasets_path, email)
         if os.path.exists(path_to_dataset_folder):
             datasets = os.listdir(path_to_dataset_folder)
-            result = json.dumps(datasets)
-            print("result", result)
-            return jsonify({"result": datasets})
+            result = []
+            for dataset in datasets:
+                result.append(get_description(dataset, path_to_dataset_folder))
+
+            result_dump = json.dumps(result)
+            print("result", result_dump)
+            return jsonify({"result": result})
+
+    logging.log(logging.ERROR, "not authorized")
     return jsonify(result=[])
 
 
@@ -130,18 +143,29 @@ def zipdir(path, ziph):
 @app.route("/models/<email>/<dataset>/<model>")
 def download_model(email, dataset, model):
     print("DOWNLOAD MODEL")
-    model_path = rf"D:/tmp/{email}/{dataset}/tuner-1/{model}/saved_model/"
-    print(model_path)
+    result_path = config.get_val(constants.RESULTS_FOLDER, None)
+    if result_path is None:
+        logging.log(logging.ERROR, "constants.RESULTS_FOLDER not inited")
+        return redirect("/results")
+
+    model_path = rf"{result_path}/{email}/{dataset}/tuner-1/{model}/saved_model/"
+
+    logging.log(logging.INFO, f"downloading model. model_path = {model_path}")
     if os.path.exists(model_path):
         files = os.listdir(model_path)
         if len(files) >= 1:
             file = files[0]
             # zipfile
-            model_to_save = rf"D:\Колледж\курсовая 4 курс\flask-jwt-auth-master\project\server\model\{email}_{dataset}_{model}.zip"
-            zipf = zipfile.ZipFile(model_to_save, 'w', zipfile.ZIP_DEFLATED)
+            downloads_folder_path = config.get_val(constants.RESULTS_FOLDER, "/download_models")
+            downloads_folder_path += "/download_models"
+            if not os.path.exists(downloads_folder_path):
+                os.makedirs(downloads_folder_path)
+
+            path_to_zip = f"{downloads_folder_path}/{email}_{dataset}_{model}.zip"
+            zipf = zipfile.ZipFile(path_to_zip, 'w', zipfile.ZIP_DEFLATED)
             zipdir(model_path, zipf)
             zipf.close()
-            return send_file(model_to_save, as_attachment=True)
+            return send_file(path_to_zip, as_attachment=True)
         else:
             print("No Files Here")
     else:
@@ -161,30 +185,45 @@ def select_dataset():
     print("BODY:::::", request.args)
     dataset_name = request.args['dataset']
     path_to_dataset_folder = os.path.join(config.get_val(constants.DATASETS_FOLDER, "datasets"), email, dataset_name)
-    print("FULL_DATASET_PATH", path_to_dataset_folder)
+    logging.log(logging.WARNING, "FULL_DATASET_PATH" + path_to_dataset_folder)
 
     if os.path.exists(path_to_dataset_folder):
-        dataset_files = os.listdir(path_to_dataset_folder)
-        data = {}
-        if "__info.json" in dataset_files:
-            with open(f"{path_to_dataset_folder}/__info.json") as data_source_file:
-                data = json.load(data_source_file)
-        data_source = data.get('csv_file', dataset_files[0])
-        date_created = data.get("date", time.time())
-        task_type = data.get("task", "Classification")
-        df = pd.read_csv(f"{path_to_dataset_folder}/{data_source}")
-        df_shape = df.shape
-        table = df.head(25).to_html()
+        description = get_desc(path_to_dataset_folder)
+
+        logging.log(logging.WARNING, "QWE"+description.get("dataset_type", "csv"))
+        data_source = description.get('csv_file', find_first_csv_file(path_to_dataset_folder))
+        date_created = description.get("upload_time", time.time())
+        task_type = description.get("task_type", "Classification")
+        data_type = description.get("dataset_type", "csv")
+
         result = {
             "name": str(dataset_name),
-            "table": str(table),
-            "shape": str(df_shape),
             "date": str(date_created),
-            "task_type": str(task_type)
+            "task_type": str(task_type),
+            "data_type": str(data_type)
         }
-        print("result", result)
-        for i in result:
-           print(type(result[i]))
+
+        result = {**description, **result}
+
+        if data_type == "csv":
+            df = pd.read_csv(f"{path_to_dataset_folder}/{data_source}")
+
+            result["table"] = str(df.head(25).to_html())
+            result["shape"] = str(df.shape)
+
+            print("result", result)
+            for i in result:
+                print(type(result[i]))
+
+        elif data_type == "image":
+            category_has_files = get_few_file_names_from_each_category(path_to_dataset_folder+"/images", 5)
+
+            category_has_n_files = count_files_in_dir_by_category(path_to_dataset_folder+"/images")
+
+            result["table"] = str("<table><tbody></tbody></table>"),
+            result["category_has_n_files"] = category_has_n_files
+            result["category_has_files"] = category_has_files
+
         return jsonify({"result": result}), 200
 
     else:
@@ -194,39 +233,91 @@ def select_dataset():
 @app.route('/__add_dataset', methods=['POST'])
 def add_dataset():
     print("__ADDDATASETS___________________________________________________________", )
+    print("REQUEST:::", request)
     print("ALL_DATA::::", request.form)
-    email = request.form['dataset_email']
-    if email == "":
 
+    task_type = request.form.get("radio_task_type", '')
+    dataset_type = request.form.get("radio_data_type", '')
+    dataset_name = request.form.get("dataset_name", '')
+    email = request.form.get("dataset_email", '')
+
+    if task_type == '':
+        logging.log(logging.ERROR, "no task_type")
         return redirect("/datasets")
 
-    print("FILES:::", request.files)
+    if dataset_type == '':
+        logging.log(logging.ERROR, "no dataset_type")
+        return redirect("/datasets")
+
+    if email == '':
+        logging.log(logging.ERROR, "No email")
+        return redirect("/datasets")
+
+    logging.log(logging.ERROR, "FILES:::" + str(request.files))
     if 'file_upload' not in request.files:
         logging.log(logging.ERROR, "No file")
         return redirect("/datasets")
 
+    logging.log(logging.ERROR, "FILES 123:::" + str(request.files['file_upload']))
     file = request.files['file_upload']
     if file.filename == '':
         logging.log(logging.ERROR, "No file 2")
         return redirect("/datasets")
+
+    logging.log(logging.ERROR, "FILES 321:::" + str(request.files['file_upload']))
     if file and allowed_file(file.filename):
         datasets_path = config.get_val(constants.DATASETS_FOLDER)
+        logging.log(logging.ERROR, "FILES 321:::" + str(request.files['file_upload']))
         if datasets_path is None:
             logging.log(logging.ERROR, "datasets_path not inited")
             return redirect("/datasets")
 
-        path_dir = os.path.join(datasets_path, email, request.form['dataset_name'])
+        logging.log(logging.ERROR, "FILES 321:::" + str(request.files['file_upload']))
+        path_dir = os.path.join(datasets_path, email, dataset_name)
         if not os.path.exists(path_dir):
             print("Creating:::", path_dir)
             os.makedirs(path_dir)
-        filename = os.path.join(path_dir, file.filename)
-        print("FILENAME::::", filename)
-        # print(os.getcwd())
-        file.save(filename)
 
-    print("REQUEST:::", request)
-    projectpath = request.form
-    print("FORM :::", projectpath)
+        input_file_path = os.path.join(path_dir, file.filename)
+        logging.log(logging.INFO, "FILENAME::::" + input_file_path)
+        file.save(input_file_path)
+
+        description = {"task_type": task_type, "dataset_type": dataset_type, "dataset_name": dataset_name,
+                       "email": email, "upload_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+        if file.filename.endswith('.csv'):
+            description["size"] = os.path.getsize(input_file_path)
+            description['n_cols'], description['n_rows'] = get_csv_dimensions(input_file_path)
+            pass
+
+        elif file.filename.endswith('.rar'):
+            raise Exception("NOT IMPLEMENTED")
+            extract_path = os.path.join(path_dir, 'images')
+
+            extract_and_delete_rar(input_file_path, extract_path)
+
+        elif file.filename.endswith('.zip'):
+            extract_path = os.path.join(path_dir, 'images')
+
+            extract_and_delete_zip(input_file_path, extract_path)
+
+            dir_count = len(os.listdir(extract_path))
+            description["n_classes"] = dir_count
+
+            description["size"] = get_folder_size(extract_path)
+
+            files_count = count_files_in_dir_total(extract_path)
+
+            description["n_files"] = files_count
+
+        else:
+            logging.log(logging.ERROR, "Unknown extension: " + file.filename)
+
+    file_path = os.path.join(path_dir, "description.json")
+    with open(file_path, "w") as file:
+        json.dump(description, file)
+
+    logging.log(logging.INFO, "Success")
     return redirect("/datasets")
 
 
@@ -277,11 +368,11 @@ def train_model():
     user_email = request.form['dataset_email']
     model_size_choice = request.form['model_size']
 
-    model_size = "little"
+    model_size = constants.MODEL_LITTLE
     if str(model_size_choice) == "2":
-        model_size = "medium"
+        model_size = constants.MODEL_MEDIUM
     elif str(model_size_choice) == "3":
-        model_size = "large"
+        model_size = constants.MODEL_LARGE
 
     print(f"Selected model_size: {model_size}")
 
@@ -347,7 +438,7 @@ def load_results():
 
     print("BODY:::::", request.args)
     result_dict = {}
-    datasets_path = config.get_val(constants.DATASETS_FOLDER) + "/" + email + "/"
+    datasets_path = config.get_val(constants.RESULTS_FOLDER) + "/" + email + "/"
     datasets = os.listdir(datasets_path)
     tf_size_guidance = {
         'compressedHistograms': 10,
@@ -390,13 +481,14 @@ def load_results():
                         full_history_file_path = os.path.join(eval_folder, history_file)
                         # event_acc = EventAccumulator(full_history_file_path, tf_size_guidance)
                         # event_acc.Reload()
-                        result_dict[dataset_name][model]['accuracy'] = 1#event_acc.Scalars('accuracy')[0].value
-                        result_dict[dataset_name][model]['auc_pr'] = 1#event_acc.Scalars('auc_pr')[-1].value
-                        result_dict[dataset_name][model]['auc_roc'] =1 #event_acc.Scalars('auc_roc')[-1].value
-                        result_dict[dataset_name][model]['loss'] =1# event_acc.Scalars('loss')[-1].value
-                        result_dict[dataset_name][model]['num_parameters'] = 1 #event_acc.Scalars('num_parameters')[-1].value
+                        result_dict[dataset_name][model]['accuracy'] = 1  # event_acc.Scalars('accuracy')[0].value
+                        result_dict[dataset_name][model]['auc_pr'] = 1  # event_acc.Scalars('auc_pr')[-1].value
+                        result_dict[dataset_name][model]['auc_roc'] = 1  # event_acc.Scalars('auc_roc')[-1].value
+                        result_dict[dataset_name][model]['loss'] = 1  # event_acc.Scalars('loss')[-1].value
+                        result_dict[dataset_name][model][
+                            'num_parameters'] = 1  # event_acc.Scalars('num_parameters')[-1].value
 
-    print(result_dict)
+    logging.log(logging.WARNING, result_dict)
 
     if len(result_dict) > 0:
         return jsonify({"result": result_dict}), 200

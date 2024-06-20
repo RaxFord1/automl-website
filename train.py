@@ -17,15 +17,11 @@ from project.server.rabbit_mq.start_training import RequestStartTraining
 
 
 def start_training(request: RequestStartTraining):
-    # data_filename = "model_search/data/testdata/csv_random_data.csv"
-    # data_filename = r"C:\\Users\\Dzund\\Projects\\model_search\\model_search\\default.csv"
-
     data_filename = request.full_csv_path
     out_path = request.out_path
     owner_name = request.user_email
     experiment_name = request.dataset_name
     model_size = request.model_size
-    spec = constants.DEFAULT_DNN
 
     sys.argv = sys.argv[:1]
     try:
@@ -70,8 +66,8 @@ def start_training(request: RequestStartTraining):
                                filename=data_filename),
         spec=spec)
 
-    number_models = 15
-    train_steps = 100
+    # number_models = 15
+    # train_steps = 100
 
     trainer.try_models(
         number_models=number_models,
@@ -89,6 +85,10 @@ def callback(ch, method, properties, body):
 
     request = RequestStartTraining.from_str(received)
     logging.log(logging.ERROR, f" [x] request: {str(request)}")
+
+    if not request.validate():
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        logging.log(logging.ERROR, " [x] request.validate failed")
 
     start_training(request)
 
