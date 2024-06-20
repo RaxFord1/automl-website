@@ -146,7 +146,7 @@ def download_model(email, dataset, model):
     result_path = config.get_val(constants.RESULTS_FOLDER, None)
     if result_path is None:
         logging.log(logging.ERROR, "constants.RESULTS_FOLDER not inited")
-        return redirect("/results")
+        return redirect("/results", error_message="constants.RESULTS_FOLDER not inited")
 
     model_path = rf"{result_path}/{email}/{dataset}/tuner-1/{model}/saved_model/"
 
@@ -243,26 +243,26 @@ def add_dataset():
 
     if task_type == '':
         logging.log(logging.ERROR, "no task_type")
-        return redirect("/datasets")
+        return redirect("/datasets", error_message="no task_type")
 
     if dataset_type == '':
         logging.log(logging.ERROR, "no dataset_type")
-        return redirect("/datasets")
+        return redirect("/datasets", error_message="no dataset_type")
 
     if email == '':
         logging.log(logging.ERROR, "No email")
-        return redirect("/datasets")
+        return redirect("/datasets", error_message="No email")
 
     logging.log(logging.ERROR, "FILES:::" + str(request.files))
     if 'file_upload' not in request.files:
         logging.log(logging.ERROR, "No file")
-        return redirect("/datasets")
+        return redirect("/datasets", error_message="No file")
 
     logging.log(logging.ERROR, "FILES 123:::" + str(request.files['file_upload']))
     file = request.files['file_upload']
     if file.filename == '':
         logging.log(logging.ERROR, "No file 2")
-        return redirect("/datasets")
+        return redirect("/datasets", error_message="No file 2")
 
     logging.log(logging.ERROR, "FILES 321:::" + str(request.files['file_upload']))
     if file and allowed_file(file.filename):
@@ -270,7 +270,8 @@ def add_dataset():
         logging.log(logging.ERROR, "FILES 321:::" + str(request.files['file_upload']))
         if datasets_path is None:
             logging.log(logging.ERROR, "datasets_path not inited")
-            return redirect("/datasets")
+
+            return redirect("/datasets", error_message=f"datasets_path not inited!")
 
         logging.log(logging.ERROR, "FILES 321:::" + str(request.files['file_upload']))
         path_dir = os.path.join(datasets_path, email, dataset_name)
@@ -345,8 +346,13 @@ def delete_dataset():
 
     # print("BODY:::::", request.args)
     dataset_name = request.form['dataset']
-    path_to_dataset_folder = os.path.join("datasets", email, dataset_name)
-    # print("FULL_DATASET_PATH", path_to_dataset_folder)
+
+    datasets_path = config.get_val(constants.DATASETS_FOLDER)
+    if datasets_path is None:
+        logging.log(logging.ERROR, "datasets_path not inited")
+        return jsonify({"result": f"Coundln't delete {dataset_name}"}), 401
+
+    path_to_dataset_folder = os.path.join(datasets_path, email, dataset_name)
 
     if os.path.exists(path_to_dataset_folder):
         try:
@@ -380,21 +386,23 @@ def train_model():
     datasets_folder_path = config.get_val(constants.DATASETS_FOLDER)
     if datasets_folder_path is None:
         logging.log(logging.ERROR, "constants.DATASETS_FOLDER is not inited")
-        return redirect("/results")
+        return redirect("/results", error_message=f"constants.DATASETS_FOLDER is not inited")
 
     dataset_path = os.path.join(datasets_folder_path, user_email, dataset_name)
     if not os.path.exists(dataset_path):
         print(f"{dataset_path} not found. redirecting!")
-        return redirect("/datasets")
+        return redirect("/datasets", error_message=f"{dataset_path} not found. redirecting!")
 
-    dir_files = os.listdir(dataset_path)
-    csv_path = dir_files[0]
-    if "__info.csv" in dir_files:
-        pass  # read file
-    else:
-        csv_path = dir_files[0]
+    description = get_desc(dataset_path)
 
-    full_csv_path = os.path.join(dataset_path, csv_path)
+    data_type = description.get("dataset_type", None)
+
+    full_csv_path = None
+    if data_type is not None and data_type == "csv":
+        logging.log(logging.WARNING, "QWE" + description.get("dataset_type", "csv"))
+        data_source = description.get('csv_file', find_first_csv_file(dataset_path))
+
+        full_csv_path = os.path.join(dataset_path, data_source)
 
     out_path = os.getenv(constants.RESULTS_FOLDER, "/tmp") + "/" + user_email + "/" + dataset_name
     if not os.path.exists(out_path):
@@ -404,20 +412,11 @@ def train_model():
     print("REQUEST:::", request)
     projectpath = request.form
     print("FORM :::", projectpath)
-    # subprocess.Popen
-
-    # command = shlex.split('python train.py C:\\Users\\Dzund\\Projects\\model_search\\model_search\\default.csv /tmp/run_example3 -e exp1 -o qwerty1 -s little')
-    # command = ['python', 'train.py', full_csv_path, out_path,
-    #            '-e', dataset_name, '-o', user_email, '-s', model_size]
-    #
-    # print(command)
-    # Popen(command, stdout=PIPE, stderr=PIPE)
 
     send_message_to_start_training_channel(RequestStartTraining(full_csv_path=full_csv_path,
                                                                 out_path=out_path, dataset_name=dataset_name,
-                                                                user_email=user_email, model_size=model_size))
-    # with Popen(command, stdout=PIPE) as proc:
-    #    log.write(proc.stdout.read())
+                                                                user_email=user_email, model_size=model_size,
+                                                                dataset_path=dataset_path))
 
     return redirect("/results")
 

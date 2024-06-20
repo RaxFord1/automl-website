@@ -35,6 +35,9 @@ services:
       dockerfile: DockerFileFrontML
     ports:
       - "5001:5000"
+    depends_on:
+      - db
+      - rabbitmq
     volumes:
       - .:/app
       - datasets:${DATASETS_FOLDER}
@@ -46,12 +49,16 @@ services:
     build:
       context: .
       dockerfile: DockerFileTrainML
+    depends_on:
+      - rabbitmq
     volumes:
       - .:/app
       - datasets:${DATASETS_FOLDER}
       - results:${RESULTS_FOLDER}
     networks:
       - app-network
+    command: ["conda", "run", "--no-capture-output", "-n", "training-ml", "python", "train.py"]
+#    command: ["/bin/sh", "-c", "sleep infinity"]
 
 volumes:
   pgdata:

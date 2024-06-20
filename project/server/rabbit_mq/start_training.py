@@ -11,12 +11,14 @@ from project.constants import RABBIT_MQ_START_TRAINING_CHANNEL
 
 
 class RequestStartTraining:
-    def __init__(self, full_csv_path: str, out_path: str, dataset_name: str, user_email: str, model_size: str):
+    def __init__(self, full_csv_path: str, out_path: str, dataset_name: str, user_email: str, model_size: str,
+                 dataset_path: str):
         self.full_csv_path = full_csv_path
         self.out_path = out_path
         self.dataset_name = dataset_name
         self.user_email = user_email
         self.model_size = model_size
+        self.dataset_path = dataset_path
 
     def to_dict(self) -> Dict[str, str]:
         return {
@@ -24,7 +26,8 @@ class RequestStartTraining:
             "out_path": self.out_path,
             "dataset_name": self.dataset_name,
             "user_email": self.user_email,
-            "model_size": self.model_size
+            "model_size": self.model_size,
+            "dataset_path": self.dataset_path,
         }
 
     def __str__(self) -> str:
@@ -36,7 +39,8 @@ class RequestStartTraining:
                 or self.out_path == "" \
                 or self.full_csv_path == "" \
                 or self.dataset_name == "" \
-                or self.user_email == "":
+                or self.user_email == ""\
+                or self.dataset_path == "":
             logging.log(logging.ERROR, "validate failed for:" + self.__str__())
             return False
 
