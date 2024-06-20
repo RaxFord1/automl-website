@@ -72,7 +72,7 @@ class SingleTrainer(object):
         max_trials=number_models)
 
     # pylint: disable=protected-access
-    self._oracle._set_project_dir(root_dir, experiment_name, overwrite=True)
+    self._oracle._set_project_dir(root_dir, str(experiment_name), overwrite=True)
     # pylint: enable=protected-access
 
     while oss_trainer_lib.run_parameterized_train_and_eval(
