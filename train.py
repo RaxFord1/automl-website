@@ -22,12 +22,13 @@ DEFAULT_DNN = "./model_search/configs/dnn_config.pbtxt"
 DEFAULT_CNN = "./model_search/configs/cnn_config.pbtxt"
 
 
-def start_training_image(dataset_path, out_path, owner_name, experiment_name, model_size, images_sizes: (int, int)):
+def start_training_image(dataset_path: str, out_path: str, owner_name: str, experiment_name: str, model_size: str,
+                         images_sizes: (int, int)):
     spec = constants.DEFAULT_CNN
 
     if model_size == "little":
-        number_models = 5
-        train_steps = 100
+        number_models = 10
+        train_steps = 10000
     elif model_size == "medium":
         number_models = 10
         train_steps = 1000
@@ -52,13 +53,13 @@ def start_training_image(dataset_path, out_path, owner_name, experiment_name, mo
     trainer.try_models(
         number_models=number_models,
         train_steps=train_steps,
-        eval_steps=10,
+        eval_steps=100,
         root_dir=out_path,  # "/tmp/run_example3",
         batch_size=64,
         experiment_name=experiment_name,  # "example3",
         experiment_owner=owner_name)  # "model_search_user")
 
-    generate_results(out_path)
+    generate_results(trainer, out_path)
 
 
 def start_training_csv(data_filename, out_path, owner_name, experiment_name, model_size):
@@ -82,8 +83,8 @@ def start_training_csv(data_filename, out_path, owner_name, experiment_name, mod
             label_index = 0
 
     if model_size == "little":
-        number_models = 5
-        train_steps = 100
+        number_models = 10
+        train_steps = 10000
     elif model_size == "medium":
         number_models = 10
         train_steps = 1000
@@ -102,13 +103,13 @@ def start_training_csv(data_filename, out_path, owner_name, experiment_name, mod
     trainer.try_models(
         number_models=number_models,
         train_steps=train_steps,
-        eval_steps=10,
+        eval_steps=100,
         root_dir=out_path,  # "/tmp/run_example3",
         batch_size=64,
         experiment_name=experiment_name,  # "example3",
         experiment_owner=owner_name)  # "model_search_user")
 
-    generate_results(out_path)
+    generate_results(trainer, out_path)
 
 
 def start_training(request: RequestStartTraining):
@@ -135,7 +136,7 @@ def start_training(request: RequestStartTraining):
         start_training_csv(data_filename, out_path, owner_name, experiment_name, model_size)
     elif data_type == "image":
         # images_size = (100, 100)
-        dataset_path = dataset_path + "/images"
+        dataset_path = os.path.join(dataset_path, "images")
         images_size = check_image_sizes(dataset_path)
         start_training_image(dataset_path, out_path, owner_name, experiment_name, model_size, images_size)
 

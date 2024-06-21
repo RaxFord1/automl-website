@@ -4,6 +4,7 @@ import tensorflow as tf
 
 
 def check_image_sizes(folder) -> (int, int):
+    logging.log(logging.ERROR, f"folder = {folder}")
     image_sizes = set()
 
     # Walk through the folder

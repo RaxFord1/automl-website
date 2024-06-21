@@ -51,7 +51,6 @@ function select_dataset(element) {
         headers: {"Authorization": "Bearer " + $auth_token},
         success: function (data) {
 
-            debugger
             if (data['result']['task_type'] == "classification") {
                 $("#task_type_classification").prop('checked', true);
             } else {

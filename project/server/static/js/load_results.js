@@ -36,6 +36,8 @@ function load_results() {
                                         <td scope="col">num_parameters</td>
                                         <td scope="col">Дія</td>
                                         <td scope="col">Images</td>
+                                        <td scope="col">Images-Val</td>
+                                        <td scope="col">Architecture</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,12 +75,64 @@ function load_results() {
                         imgElement.setAttribute("data-src", `/results/${$email}/${dataset}/${model}/${image}`);
                         imagesCell.appendChild(imgElement);
                     });
+
+                    let imagesCell2 = newRow.insertCell(8);
+                    let images2 = results.result[dataset][model]["val_images"];
+                    images2.forEach(function (image) {
+                        let imgElement = document.createElement("img");
+                        imgElement.src = `/results/${$email}/${dataset}/${model}/${image}`;
+                        imgElement.style.width = "50px";  // Adjust the size as needed
+                        imgElement.style.height = "50px"; // Adjust the size as needed
+                        imgElement.style.cursor = "pointer";
+
+                        imgElement.setAttribute("data-toggle", "modal");
+                        imgElement.setAttribute("data-target", "#imageModal");
+
+                        imgElement.setAttribute("data-src", `/results/${$email}/${dataset}/${model}/${image}`);
+                        imagesCell2.appendChild(imgElement);
+                    });
+
+                    let architectureCell = newRow.insertCell(9);
+                    let architecture = results.result[dataset][model]["architecture"];
+                    architecture.forEach(function (arch) {
+                        architectureCell.innerHTML += `<p>${arch.name}: ${arch.shape}</p>`;
+                    });
                 });
                 console.log(dataset);
             })
             console.log("SUCCESS LOAD_DATASET");
             console.log(data);
-//            initDrawers();
+
+            if (!document.getElementById("imageModal")) {
+                let modalHtml = `
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <img id="modalImage" src="" class="img-fluid" alt="Image">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+                // Add event listener to update modal image source
+                $('#imageModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var src = button.data('src'); // Extract info from data-* attributes
+                    var modal = $(this);
+                    modal.find('.modal-body img').attr('src', src);
+                });
+            }
         }
     }).fail(function (data) {
         console.log("dataset_load FAIL");
