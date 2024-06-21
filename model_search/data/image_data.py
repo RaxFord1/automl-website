@@ -38,7 +38,7 @@ class Provider(data.Provider):
       dataset = tf.keras.preprocessing.image_dataset_from_directory(
           directory=self._input_dir,
           labels='inferred',
-          label_mode='binary',
+          label_mode='int',
           class_names=None,
           color_mode='rgb',
           batch_size=batch_size,
