@@ -1,18 +1,28 @@
 # Use the official Ubuntu base image
 FROM continuumio/miniconda3
 
+#RUN git clone https://github.com/RaxFord1/automl-website.git
+
 WORKDIR /app
 
 COPY . .
 
+#WORKDIR /automl-website
+
 RUN conda env create -f environment_conda_train.yml
+#
 
 RUN echo "conda activate training-ml" > ~/.bashrc
-SHELL ["/bin/bash", "--login", "-c"]
 
-RUN conda activate training-ml && python -c "import google.protobuf; print(google.protobuf.__version__)"
+#RUN echo "conda activate training-ml" > ~/.bashrc
+#SHELL ["/bin/bash", "--login", "-c"]
+#
+#RUN conda activate training-ml && python -c "import google.protobuf; print(google.protobuf.__version__)"
+SHELL ["conda", "run", "--no-capture-output",  "-n", "training-ml", "/bin/bash", "-c"]
 
-RUN ./proto_init.sh
+EXPOSE 5000
+
+ENTRYPOINT ./proto_init.sh
 
 #RUN conda init && conda activate training-ml && cd /app && \
 #    protoc --python_out=./ ./model_search/proto/phoenix_spec.proto && \
@@ -25,5 +35,6 @@ RUN ./proto_init.sh
 
 #CMD ["/bin/sh", "-c", "sleep infinity"]
 
+#SHELL ["/bin/bash", "--login", "-c"]
 
 #CMD ["conda", "run", "--no-capture-output", "-n", "training-ml", "python", "train.py"]

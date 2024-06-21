@@ -18,6 +18,10 @@ from project.server.utils.check_before_traininig import check_image_sizes
 from project.server.utils.dataset_info import get_desc
 
 
+DEFAULT_DNN = "./model_search/configs/dnn_config.pbtxt"
+DEFAULT_CNN = "./model_search/configs/cnn_config.pbtxt"
+
+
 def start_training_image(dataset_path, out_path, owner_name, experiment_name, model_size, images_sizes: (int, int)):
     spec = constants.DEFAULT_CNN
 
@@ -40,7 +44,7 @@ def start_training_image(dataset_path, out_path, owner_name, experiment_name, mo
             image_height=images_sizes[0],
             image_width=images_sizes[1],
             eval_fraction=0.2),
-        spec=constants.DEFAULT_CNN)
+        spec=DEFAULT_CNN)
 
     # number_models = 15
     # train_steps = 100
@@ -53,6 +57,8 @@ def start_training_image(dataset_path, out_path, owner_name, experiment_name, mo
         batch_size=64,
         experiment_name=experiment_name,  # "example3",
         experiment_owner=owner_name)  # "model_search_user")
+
+    generate_results()
 
 
 def start_training_csv(data_filename, out_path, owner_name, experiment_name, model_size):
@@ -88,7 +94,7 @@ def start_training_csv(data_filename, out_path, owner_name, experiment_name, mod
     trainer = single_trainer.SingleTrainer(
         data=csv_data.Provider(label_index=0, logits_dimension=2, record_defaults=logits_defaults,
                                filename=data_filename),
-        spec=constants.DEFAULT_DNN)
+        spec=DEFAULT_DNN)
 
     # number_models = 15
     # train_steps = 100
@@ -152,6 +158,7 @@ def callback(ch, method, properties, body):
 def main():
     rabbit_mq_host = config.get_val(proj_constants.RABBIT_MQ_HOST, None)
     if rabbit_mq_host is None:
+        logging.log(logging.ERROR, "RABBIT_MQ_HOST is not defined in config")
         raise Exception("RABBIT_MQ_HOST is not defined in config")
 
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbit_mq_host))
@@ -161,7 +168,7 @@ def main():
 
     channel.basic_consume(queue=proj_constants.RABBIT_MQ_START_TRAINING_CHANNEL, on_message_callback=callback)
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
+    logging.log(logging.WARNING, ' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
 
 

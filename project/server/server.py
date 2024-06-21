@@ -24,6 +24,7 @@ from project.server.utils.dataset_info import get_description, get_folder_size, 
     get_few_file_names_from_each_category, find_first_csv_file, get_desc, count_files_in_dir_total, \
     count_files_in_dir_by_category
 from project.server.utils.rar_or_zip import extract_and_delete_rar, extract_and_delete_zip
+from project.server.utils.results_info import find_tuner_path, get_results_info_for_all_experiment
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -439,53 +440,14 @@ def load_results():
     result_dict = {}
     datasets_path = config.get_val(constants.RESULTS_FOLDER) + "/" + email + "/"
     datasets = os.listdir(datasets_path)
-    tf_size_guidance = {
-        'compressedHistograms': 10,
-        'images': 0,
-        'scalars': 100,
-        'histograms': 1
-    }
+
     print(f"DATASETS for {email}:: ", datasets)
-    # from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
     for dataset_name in datasets:
-        dataset_path = os.path.join(datasets_path, dataset_name)
-        root_dataset_folders = os.listdir(dataset_path)
-        for folder in root_dataset_folders:
-            if "tuner" not in folder:
-                continue
-            else:
+        result_dataset_path = os.path.join(datasets_path, dataset_name)
 
-                tuner_path = os.path.join(dataset_path, folder)
+        tuner_path = find_tuner_path(result_dataset_path)
 
-                models = os.listdir(tuner_path)
-                if len(models) <= 1:
-                    continue
-
-                result_dict[dataset_name] = {}
-                print(tuner_path)
-                print(models)
-
-                for model in models:
-                    model_path = os.path.join(tuner_path, model)
-                    if len(os.listdir(model_path)) == 0:
-                        continue
-                    result_dict[dataset_name][model] = {}
-
-                    eval_folder = os.path.join(model_path, "eval")
-                    if not os.path.exists(eval_folder):
-                        continue
-                    history_file = os.listdir(eval_folder)
-                    if len(history_file) != 0:
-                        history_file = history_file[0]
-                        full_history_file_path = os.path.join(eval_folder, history_file)
-                        # event_acc = EventAccumulator(full_history_file_path, tf_size_guidance)
-                        # event_acc.Reload()
-                        result_dict[dataset_name][model]['accuracy'] = 1  # event_acc.Scalars('accuracy')[0].value
-                        result_dict[dataset_name][model]['auc_pr'] = 1  # event_acc.Scalars('auc_pr')[-1].value
-                        result_dict[dataset_name][model]['auc_roc'] = 1  # event_acc.Scalars('auc_roc')[-1].value
-                        result_dict[dataset_name][model]['loss'] = 1  # event_acc.Scalars('loss')[-1].value
-                        result_dict[dataset_name][model][
-                            'num_parameters'] = 1  # event_acc.Scalars('num_parameters')[-1].value
+        result_dict[dataset_name] = get_results_info_for_all_experiment(tuner_path)
 
     logging.log(logging.WARNING, result_dict)
 

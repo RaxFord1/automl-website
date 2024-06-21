@@ -57,7 +57,7 @@ services:
       - results:${RESULTS_FOLDER}
     networks:
       - app-network
-    command: ["conda", "run", "--no-capture-output", "-n", "training-ml", "python", "train.py"]
+#    command: ["conda", "run", "--no-capture-output", "-n", "training-ml", "python", "train.py"]
 #    command: ["/bin/sh", "-c", "sleep infinity"]
 
 volumes:
