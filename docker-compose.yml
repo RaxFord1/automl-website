@@ -2,15 +2,15 @@ version: '3.8'
 
 networks:
   app-network:
-    driver: bridge
+    external: true
 
 services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-postgres}
+      POSTGRES_DB: ${POSTGRES_DB-postgres}
     ports:
       - "5432:5432"
     volumes:
@@ -30,6 +30,14 @@ services:
       - app-network
 
   front-ml:
+    image: front-ml:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     build:
       context: .
       dockerfile: DockerFileFrontML
@@ -40,21 +48,29 @@ services:
       - rabbitmq
     volumes:
       - .:/app
-      - datasets:${DATASETS_FOLDER}
-      - results:${RESULTS_FOLDER}
+      - datasets:/datasets
+      - results:/results
     networks:
       - app-network
 
   train-ml:
+    image: train-ml:latest
     build:
       context: .
       dockerfile: DockerFileTrainML
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     depends_on:
-      - rabbitmq
+      - front-ml
     volumes:
       - .:/app
-      - datasets:${DATASETS_FOLDER}
-      - results:${RESULTS_FOLDER}
+      - datasets:/datasets
+      - results:/results
     networks:
       - app-network
 #    command: ["conda", "run", "--no-capture-output", "-n", "training-ml", "python", "train.py"]
@@ -62,7 +78,5 @@ services:
 
 volumes:
   pgdata:
-
   datasets:
-
   results:

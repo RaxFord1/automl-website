@@ -40,6 +40,13 @@ docker-compose down
 ```
 
 
+# DEPLOY:
+
+`docker swarm init`
+
+`docker network create --driver overlay app-network`
+
+`docker stack deploy -c docker-compose.yml auto-ml`
 
 [![Build Status](https://travis-ci.org/realpython/flask-jwt-auth.svg?branch=master)](https://travis-ci.org/realpython/flask-jwt-auth)
 
