@@ -197,6 +197,7 @@ def generate_images(event_acc, results_dataset_folder_path, model, prefix=""):
     images = []
 
     for tag in tags:
+
         events = event_acc.Scalars(tag)
 
         steps = [event.step for event in events]
@@ -213,6 +214,7 @@ def generate_images(event_acc, results_dataset_folder_path, model, prefix=""):
         plt.ylabel(tag)
         plt.title(tag)
 
+        tag = tag.replace("/", "-")
         image_name = f'{prefix}{tag}.png'
         save_path = os.path.join(save_dir, image_name)
 
