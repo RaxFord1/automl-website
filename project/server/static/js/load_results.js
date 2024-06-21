@@ -13,6 +13,8 @@ function load_results() {
         headers: {"Authorization": "Bearer " + $auth_token},
         success: function (data) {
             results = data
+            console.log("__load_results")
+            console.log(data)
             Object.keys(results.result).forEach(function (dataset) {
                 let result_container = document.getElementsByClassName("results_container");
                 result_container[0].innerHTML += `
@@ -33,6 +35,7 @@ function load_results() {
                                         <td scope="col">loss</td>
                                         <td scope="col">num_parameters</td>
                                         <td scope="col">Дія</td>
+                                        <td scope="col">Images</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -55,12 +58,27 @@ function load_results() {
 
                     newRow.insertCell(6).innerHTML = `<a href="/models/${$email}/${dataset}/${model}">Завантажити</a>`;
 
+                    let imagesCell = newRow.insertCell(7);
+                    let images = results.result[dataset][model]["images"];
+                    images.forEach(function (image) {
+                        let imgElement = document.createElement("img");
+                        imgElement.src = `/results/${$email}/${dataset}/${model}/${image}`;
+                        imgElement.style.width = "50px";  // Adjust the size as needed
+                        imgElement.style.height = "50px"; // Adjust the size as needed
+                        imgElement.style.cursor = "pointer";
+
+                        imgElement.setAttribute("data-toggle", "modal");
+                        imgElement.setAttribute("data-target", "#imageModal");
+
+                        imgElement.setAttribute("data-src", `/results/${$email}/${dataset}/${model}/${image}`);
+                        imagesCell.appendChild(imgElement);
+                    });
                 });
                 console.log(dataset);
             })
             console.log("SUCCESS LOAD_DATASET");
             console.log(data);
-            initDrawers();
+//            initDrawers();
         }
     }).fail(function (data) {
         console.log("dataset_load FAIL");

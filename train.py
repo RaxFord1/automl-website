@@ -16,7 +16,7 @@ from project.server import config
 from project.server.rabbit_mq.start_training import RequestStartTraining
 from project.server.utils.check_before_traininig import check_image_sizes
 from project.server.utils.dataset_info import get_desc
-
+from project.server.utils.results_info import generate_results
 
 DEFAULT_DNN = "./model_search/configs/dnn_config.pbtxt"
 DEFAULT_CNN = "./model_search/configs/cnn_config.pbtxt"
@@ -58,7 +58,7 @@ def start_training_image(dataset_path, out_path, owner_name, experiment_name, mo
         experiment_name=experiment_name,  # "example3",
         experiment_owner=owner_name)  # "model_search_user")
 
-    generate_results()
+    generate_results(out_path)
 
 
 def start_training_csv(data_filename, out_path, owner_name, experiment_name, model_size):
@@ -107,6 +107,8 @@ def start_training_csv(data_filename, out_path, owner_name, experiment_name, mod
         batch_size=64,
         experiment_name=experiment_name,  # "example3",
         experiment_owner=owner_name)  # "model_search_user")
+
+    generate_results(out_path)
 
 
 def start_training(request: RequestStartTraining):

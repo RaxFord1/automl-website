@@ -11,11 +11,12 @@ import pandas as pd
 import rarfile
 import zipfile
 
-from flask import Flask, render_template, jsonify, request, redirect
+from flask import Flask, render_template, jsonify, request, redirect, send_from_directory
 from flask import send_file
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.exceptions import abort
 
 from project import constants
 from project.server import config
@@ -24,7 +25,7 @@ from project.server.utils.dataset_info import get_description, get_folder_size, 
     get_few_file_names_from_each_category, find_first_csv_file, get_desc, count_files_in_dir_total, \
     count_files_in_dir_by_category
 from project.server.utils.rar_or_zip import extract_and_delete_rar, extract_and_delete_zip
-from project.server.utils.results_info import find_tuner_path, get_results_info_for_all_experiment
+from project.server.utils.results_info import get_results_info_for_all_experiment_from_summary_file
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -445,9 +446,11 @@ def load_results():
     for dataset_name in datasets:
         result_dataset_path = os.path.join(datasets_path, dataset_name)
 
-        tuner_path = find_tuner_path(result_dataset_path)
+        result_dict[dataset_name] = get_results_info_for_all_experiment_from_summary_file(result_dataset_path)
 
-        result_dict[dataset_name] = get_results_info_for_all_experiment(tuner_path)
+        # tuner_path = find_tuner_path(result_dataset_path)
+        #
+        # result_dict[dataset_name] = get_results_info_for_all_experiment(tuner_path)
 
     logging.log(logging.WARNING, result_dict)
 
@@ -456,3 +459,17 @@ def load_results():
 
     else:
         return jsonify(result=[])
+
+
+@app.route("/results/<email>/<dataset>/<model>/<image_name>")
+def get_image_results(email, dataset, model, image_name):
+    results_folder = config.get_val(constants.RESULTS_FOLDER, None)
+    if results_folder is None :
+        return redirect("/results", error_message="constants.RESULTS_FOLDER not inited")
+
+    image_path = os.path.join(results_folder, email, dataset, "tensorboard_graphs", model, image_name)
+
+    if os.path.isfile(image_path):
+        return send_from_directory(os.path.dirname(image_path), os.path.basename(image_path))
+    else:
+        abort(404)
